@@ -8,6 +8,11 @@ class Model_Pms extends Model {
 		DATE_FORMAT(time_in,'%m') = DATE_FORMAT(NOW(),'%m') AND 
 		DATE_FORMAT(timeout, '%m') = DATE_FORMAT(NOW(), '%m') ORDER BY attend_no DESC")->execute()->as_array();
 	}
+	
+	public function get_employee_absents($emp_id){
+		$query = DB::query(DATABASE::SELECT, "SELECT count(*) as absent FROM ems_leaves WHERE employee_id = '".$emp_id."'")->execute()->as_array();
+		return $query[0]['absent'];
+	}
 	public function get_number_of_days_worked($employee_no){
 		return DB::query(DATABASE::SELECT, "SELECT COUNT(*) AS days_worked FROM pms_attendance_monitoring WHERE emp_no = '".$employee_no."' AND 
 		DATE_FORMAT(time_in,'%m') = DATE_FORMAT(NOW(),'%m') AND 

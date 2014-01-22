@@ -201,6 +201,53 @@ class Controller_Pms extends Controller {
 		Session::instance ()->destroy ( 'pms_sess' );
 		echo "<script>self.location='" . URL::site ( 'login', true, false ) . "';</script>";
 	}
+	public function action_print_ledger(){
+		$filter_datas = array(
+				"working_status"=>null,
+				"firstname"=>null,
+				"middlename"=>null,
+				"lastname"=>null,
+				"department_name"=>null,
+				"marital_status"=>null,
+				"date_start_work_from"=>null,
+				"date_start_work_to"=>null,
+				"name"=>$this->request->query('name'),
+				"position"=>$this->request->query('position'),
+				"department"=>$this->request->query('department'),
+				"type"=>$this->request->query('type'),
+				"date"=>$this->request->query('date'),
+				"date_modified"=>$this->request->query('date_modified'),
+				"search_query"=>$this->request->query('search_query')
+		);
+		$datas = array();
+		$coun = 0;
+		$employees = $this->obj['ems_logic']->get_employees($filter_datas);
+		foreach($employees AS $employee){
+			$datas[$coun]['employee_name'] = $employee['firstname'] . " " . $employee['lastname'];
+			$datas[$coun]['position'] = $employee['pos_name'];
+			$datas[$coun]['dept'] = $employee['dept_name'];
+			$datas[$coun]['employee_rate'] = $this->obj['pms_logic']->get_employee_rate($employee['employee_id']);
+			$datas[$coun]['gross_pay'] = $this->get_employee_total_hours($employee['employee_id']) * $datas[$coun]['employee_rate'];
+			$datas[$coun]['total_hours'] = $this->get_employee_total_OT_hours($employee['employee_id']);
+			$datas[$coun]['deductions'] = $this->obj['pms_logic']->get_deduction($datas[$coun]['gross_pay']);
+			if(count($datas[$coun]['deductions']) > 0){
+				$datas[$coun]['deduction']['sss'] = $datas[$coun]['deductions'][0]['sss'];
+				$datas[$coun]['deduction']['philhealth'] = $datas[$coun]['deductions'][0]['philhealth'];
+				$datas[$coun]['deduction']['pagibig'] = $datas[$coun]['deductions'][0]['pagibig'];
+			} else {
+				$datas[$coun]['deduction']['sss'] = 0;
+				$datas[$coun]['deduction']['philhealth'] = 0;//$datas[$coun]['deductions'][0]['philhealth'];
+				$datas[$coun]['deduction']['pagibig'] = 0;//$datas[$coun]['deductions'][0]['pagibig'];
+			}
+			$datas[$coun]['net_pay'] = $datas[$coun]['gross_pay'] - array_sum($datas[$coun]['deduction']);
+			$coun++;
+		}
+		$presentation_tier = View_PDF::factory('PMS/timekeeper/print_ledger',array('title'=>'Employees Ledger', 'name'=>"Report_Ledger" . date('m-d-Y') . '_EmployeeLogs.pdf'))
+		->set('datas', $datas)
+		->set('date', date('m/d/Y'))
+		->render();
+		exit();
+	}
 	public function action_print_logs(){
 		$employee_id = null;
 		if($this->request->query('employee_id') != null){
