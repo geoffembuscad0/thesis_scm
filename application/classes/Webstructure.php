@@ -96,7 +96,8 @@ class Webstructure {
 	public function tms_personnel_navigation(){
 		$nav = '<ul class="dropdown" style="z-index:2;text-decoration:none;margin-top: -40px;height: 45px;float:right;">';
 		$nav .= '<li><a href="'.URL::base().'tms/personnel_dashboard">Dashboard</a></li>';
-		$nav .= '<li><a id="addDeliverySched" href="#addDeliverySched">Add Delivery Schedule</a></li>';
+		$nav .= '<li><a id="addDeliverySched" href="#addDeliverySched">Add Delivery Record</a></li>';
+		$nav .= '<li><a id="addshoppingMarket" href="#addShoppingMarket">Add Market</a></li>';
 		$nav .= '<li><a href="'.URL::site(null,null,false).'tms/personnel_logout">Logout</a></li>';
 		return $nav;
 	}
@@ -126,7 +127,7 @@ class Webstructure {
 	public function pms_personnel_navigation(){
 		$nav = "<ul class='dropdown' style='z-index:2;text-decoration:none;margin-top:-40px;height: 45px;float:right;'>";
 		$nav .= "<li><a href='".URL::base()."ems/hr_dashboard'>Dashboard</a></li>";
-		// 		$nav .= "<li><a href=''>Add Applicant</a></li>";
+				$nav .= "<li><a href='".URL::site(null,null,false)."pms/deduction_table'>Deduction Table</a></li>";
 		$nav .= "<li><a href='".URL::site(null,null,false)."pms/personnel_logout'>Logout</a></li>";
 		$nav .= "</ul>";
 		return $nav;
@@ -142,32 +143,12 @@ class Webstructure {
 		$nav .= "<li><a href='".URL::base()."ems/admin_dashboard'>Dashboard</a></li>";
 		$nav .= "<li><a href='".URL::base()."ems/admin_add'>Add Employee</a></li>";
 		$nav .= "<li><a href='".URL::site('ems/admin_leaves', null, false)."'>Leaves Request</a></li>";
+		$nav .= "<li><a href='".URL::site('ems/employee_statistics',null,false)."'>Employee Statistics</a></li>";
 		$nav .= "<li><a href='".URL::site(null,null,false)."ems/admin_logout'>Logout</a></li>";
 		$nav .= "<ul>";
 		return $nav;
 	}
-	public function add_delivery_sched_form(){
-		$html = null;
-		$html .= "<div id='addDeliverySchedForm' class='reveal-modal' style='color: #000;'>";
-		$html .= "<p class='close-reveal-modal' style='cursor:pointer;'>close[x]</p>";
-		$html .= "<h1>Add Delivery Schedule</h1>";
-		$html .= "<table class='InquiryDocumentsSales' style='width:100%;border: 1px solid #000;'>";
-		$html .= "<thead style='border: 1px solid #000;'>";
-		$html .= "<tr style='border: 1px solid #000;'><th colspan='2' style='border: 1px solid #000;'>Delivery Details</th></tr>";
-		$html .= "</thead>";
-		$html .= "<tbody style='border: 1px solid #000;'>";
-		$html .= "<tr><td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Receiver:</td></tr>";
-		$html .= "<tr><td colspan='2'>".Form::input('receiver',null,array('style'=>'border:1px solid #fff;width:96%;','placeholder'=>'Receiver'))."</td></tr>";
-		$html .= "<tr><td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Date Deliver Arrival:</td></tr>";
-		$html .= "<tr><td colspan='2'>" . Form::input('date_receive', null, array('class'=>'dateArrival','style'=>'border:1px solid #fff;width:96%;','placeholder'=>'Date Receiving')) . "</td></tr>";
-		$html .= "<tr><td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Details:</td></tr>";
-		$html .= "<tr><td colspan='2'>".Form::textarea('details',null,array('id'=>'detailsTxt','style'=>'border:1px solid #fff;width:96%;','placeholder'=>'Delivery Information','rows'=>3))."</td></tr>";
-		$html .= "<tr><td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'><button id='addscheduledelivery' type='button' class='approve'>Submit</button></td></tr>";
-		$html .= "</table>";
-		$html .= "<div id='deliverResponse'></div>";
-		$html .= "</div>";
-		return $html;
-	}
+
 	public function applicantHiringForm($data = array()){
 		$employee_type = array(1=>'Full-time',2=>'Part-Time');
 		$html = null;

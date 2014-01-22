@@ -4,9 +4,11 @@ defined ( 'SYSPATH' ) or die ( 'No direct script access.' );
 class Model_Ems extends Model_Database {
 	public function __construct(){	
 	}
-	
+	public function count_leaves($employee){
+		$query = DB::query(DATABASE::SELECT, "SELECT count(*) as absents from ems_leaves WHERE employee_id = '".$employee."'")->execute()->as_array();
+		return $query[0]['absents'];
+	}
 	public function save_applicant($datas = array(), $resume_file_name = null){
-//		DB::query(DATABASE::INSERT, "INSERT INTO ems_applicants VALUES(NULL,'".$datas['Firstname']."','".$datas['Middlename']."','".$datas['Lastname']."','".$datas['Address']."','".$datas['mobile']."','".$datas['email']."','".$datas['time_reach']."','".$datas['date_start']."','".$datas['position']."',0,'".$datas['file_resume']."',null)")->execute();
 		DB::query(DATABASE::INSERT, "INSERT INTO ems_employee VALUES(
 				'".$data['employee_code']."',
 				'".$data['firstname']."',
@@ -14,10 +16,8 @@ class Model_Ems extends Model_Database {
 				'".$data['lastname']."',
 				'".$data['position']."',
 				'".$data['employee_type']."',
-				now(), '".$data['birthday']."',now());")->execute();
-		
+				now(), '".$data['birthday']."',now(),0);")->execute();
 		DB::query(DATABASE::INSERT, "INSERT INTO ems_employee_locations VALUES('".$data['employee_code']."','".$data['address']."')")->execute();
-		
 		DB::query(DATABASE::INSERT, "INSERT INTO ems_employee_contact VALUES('".$data['employee_code']."','".$data['mobile']."',null,'".$data['email']."')")->execute();
 	}
 	public function get_applicants($approved = 0){
@@ -158,6 +158,10 @@ ORDER BY el.`date_requested` DESC")->execute()->as_array();
 	public function get_position_department(){
 		return DB::query(DATABASE::SELECT, "SELECT p.*,dept.* FROM ems_positions p INNER JOIN ems_departments dept ON p.`dept_no`=dept.`dept_no`")->execute()->as_array();
 	}
+	public function validate_leaves($employee_id){
+		$query = DB::query(DATBASE::SELECT, "SELECT r_leaves FROM ems_employee_leave WHERE employee_id = '".$employee_id."'")->execute()->as_array();
+		return $query[0]['r_leaves'];
+ 	}
 	public function add_employee($data = array()){
 		//DB::query(DATABASE::DELETE,"DELETE FROM ems_applicants WHERE applicant_no = '".$data['applicant_no']."'")->execute();
 		

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 20, 2014 at 02:18 AM
+-- Generation Time: Jan 22, 2014 at 04:08 AM
 -- Server version: 5.6.11
 -- PHP Version: 5.5.1
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `audit_trail` (
   `action_taken` varchar(75) DEFAULT NULL,
   `datetime_taken` datetime DEFAULT NULL,
   PRIMARY KEY (`audit_no`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=35 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=50 ;
 
 --
 -- Dumping data for table `audit_trail`
@@ -74,7 +74,22 @@ INSERT INTO `audit_trail` (`audit_no`, `username`, `action_taken`, `datetime_tak
 (00000000000000000031, 'anne@yahoo.com', 'Logged In', '2014-01-20 08:23:47'),
 (00000000000000000032, '', 'Hired Employee', '2014-01-20 09:09:43'),
 (00000000000000000033, 'anne@yahoo.com', 'Logged Out', '2014-01-20 09:11:01'),
-(00000000000000000034, 'admin-ems.admin', 'Logged In', '2014-01-20 09:11:28');
+(00000000000000000034, 'admin-ems.admin', 'Logged In', '2014-01-20 09:11:28'),
+(00000000000000000035, 'michelle@yahoo.com', 'Logged In', '2014-01-20 13:10:00'),
+(00000000000000000036, 'admin-tms.admin', 'Logged In', '2014-01-20 13:10:25'),
+(00000000000000000037, 'michelle@yahoo.com', 'Logged In', '2014-01-20 13:45:20'),
+(00000000000000000038, 'admin-tms.admin', 'Logged In', '2014-01-20 13:46:10'),
+(00000000000000000039, 'michelle@yahoo.com', 'Logged In', '2014-01-20 14:11:22'),
+(00000000000000000040, 'michelle@yahoo.com', 'Logged In', '2014-01-20 15:13:53'),
+(00000000000000000041, '', 'Logged Out', '2014-01-20 16:18:53'),
+(00000000000000000042, '', 'Logged Out', '2014-01-21 12:59:46'),
+(00000000000000000043, '', 'Logged Out', '2014-01-21 20:43:27'),
+(00000000000000000044, 'michelle@yahoo.com', 'Logged In', '2014-01-21 20:43:52'),
+(00000000000000000045, 'admin-ems.admin', 'Logged In', '2014-01-22 03:03:57'),
+(00000000000000000046, '', 'Logged Out', '2014-01-22 04:01:55'),
+(00000000000000000047, 'admin-ems.admin', 'Logged In', '2014-01-22 04:02:08'),
+(00000000000000000048, 'admin-ems.admin', 'Logged Out', '2014-01-22 08:31:17'),
+(00000000000000000049, 'michelle@yahoo.com', 'Logged In', '2014-01-22 08:35:27');
 
 -- --------------------------------------------------------
 
@@ -188,7 +203,7 @@ INSERT INTO `ems_departments` (`dept_no`, `dept_name`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `ems_employee` (
-  `employee_id` char(6) NOT NULL DEFAULT '',
+  `employee_id` varchar(75) NOT NULL DEFAULT '',
   `firstname` varchar(50) DEFAULT NULL,
   `middlename` varchar(50) DEFAULT NULL,
   `lastname` varchar(50) DEFAULT NULL,
@@ -198,6 +213,7 @@ CREATE TABLE IF NOT EXISTS `ems_employee` (
   `birthdate` datetime DEFAULT NULL,
   `date_modified` datetime DEFAULT NULL,
   `status` tinyint(4) DEFAULT NULL,
+  `relation_stat` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`employee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -205,62 +221,62 @@ CREATE TABLE IF NOT EXISTS `ems_employee` (
 -- Dumping data for table `ems_employee`
 --
 
-INSERT INTO `ems_employee` (`employee_id`, `firstname`, `middlename`, `lastname`, `position_no`, `employee_type`, `date_added`, `birthdate`, `date_modified`, `status`) VALUES
-('0af772', 'Jonnathan', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1983-10-17 00:00:00', '2014-01-06 12:15:23', 1),
-('0df96f', 'Michael', NULL, 'Amandilio', 00001, 1, '2014-01-06 05:15:23', '1984-11-23 00:00:00', '2014-01-06 12:15:23', 1),
-('0fdefa', 'Michael', NULL, 'Soriano', 00001, 1, '2014-01-06 05:15:23', '1991-11-14 00:00:00', '2014-01-06 12:15:23', 1),
-('10fcfa', 'Grace', NULL, 'Amoura', 00001, 1, '2014-01-06 05:15:23', '1988-10-25 00:00:00', '2014-01-06 12:15:23', 1),
-('114568', 'Paolo', NULL, 'Lucio', 00001, 1, '2014-01-06 05:15:23', '1982-10-10 00:00:00', '2014-01-06 12:15:23', 1),
-('11b3c5', 'Paul', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1985-12-15 00:00:00', '2014-01-06 12:15:24', 1),
-('12f480', 'Christine', NULL, 'Argente', 00001, 1, '2014-01-06 05:15:23', '1990-11-13 00:00:00', '2014-01-06 12:15:23', 1),
-('13b076', 'Rose', NULL, 'Castro', 00001, 1, '2014-01-06 05:15:23', '1989-11-24 00:00:00', '2014-01-06 12:15:23', 1),
-('1b73d2', 'Jonnathan', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1988-12-18 00:00:00', '2014-01-06 12:15:23', 1),
-('2a2d54', 'Jude', NULL, 'Asperas', 00001, 1, '2014-01-06 05:15:23', '1987-12-17 00:00:00', '2014-01-06 12:15:24', 1),
-('2d2f7c', 'James', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1991-11-10 00:00:00', '2014-01-06 12:15:24', 1),
-('2e4bd9', 'Jonnathan', NULL, 'Amoura', 00001, 1, '2014-01-06 05:15:23', '1992-12-11 00:00:00', '2014-01-06 12:15:24', 1),
-('31a18d', 'Jason', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1989-12-16 00:00:00', '2014-01-06 12:15:24', 1),
-('32358d', 'Jason', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1982-11-20 00:00:00', '2014-01-06 12:15:23', 1),
-('346e19', 'Rose', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1986-11-22 00:00:00', '2014-01-06 12:15:23', 1),
-('3e8bf4', 'Alvin', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1992-12-21 00:00:00', '2014-01-06 12:15:24', 1),
-('44cd4c', 'Grace', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1989-11-23 00:00:00', '2014-01-06 12:15:24', 1),
-('48fa63', 'Lucas', NULL, 'Reyes', 00001, 1, '2014-01-06 05:15:23', '1986-12-13 00:00:00', '2014-01-06 12:15:23', 1),
-('4bdb38', 'Sandra', NULL, 'Rincon', 00001, 1, '2014-01-06 05:15:23', '1982-12-16 00:00:00', '2014-01-06 12:15:23', 1),
-('4e6318', 'Ronnelyn', NULL, 'Nelito', 00001, 1, '2014-01-06 05:15:23', '1987-10-12 00:00:00', '2014-01-06 12:15:23', 1),
-('506b77', 'Max', NULL, 'Argente', 00001, 1, '2014-01-06 05:15:23', '1989-12-12 00:00:00', '2014-01-06 12:15:23', 1),
-('57c166', 'Alvin', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1980-10-12 00:00:00', '2014-01-06 12:15:23', 1),
-('58cd9b', 'Michael', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1987-12-11 00:00:00', '2014-01-06 12:15:24', 1),
-('595862', 'Alvin', NULL, 'Rodriguez', 00001, 1, '2014-01-06 05:15:23', '1988-11-29 00:00:00', '2014-01-06 12:15:23', 1),
-('62f682', 'Corey', NULL, 'Amandilio', 00001, 1, '2014-01-06 05:15:23', '1992-12-23 00:00:00', '2014-01-06 12:15:23', 1),
-('67c5e1', 'Corey', NULL, 'Daracen', 00001, 1, '2014-01-06 05:15:23', '1980-11-24 00:00:00', '2014-01-06 12:15:23', 1),
-('6ee6a7', 'Max', NULL, 'Duncan', 00001, 1, '2014-01-06 05:15:23', '1985-12-10 00:00:00', '2014-01-06 12:15:24', 1),
-('717208', 'Christine', NULL, 'Castro', 00001, 1, '2014-01-06 05:15:23', '1985-10-13 00:00:00', '2014-01-06 12:15:23', 1),
-('72473f', 'Jonnathan', NULL, 'Lanuza', 00001, 1, '2014-01-06 05:15:23', '1988-11-18 00:00:00', '2014-01-06 12:15:24', 1),
-('7bcbaY', 'Analyn', 'Chua', 'Sanchez', 00002, 1, '2013-12-05 18:11:22', '1989-12-06 00:00:00', '2014-01-06 11:38:02', 1),
-('7eeb24', 'Corey', NULL, 'Argente', 00001, 1, '2014-01-06 05:15:23', '1988-11-17 00:00:00', '2014-01-06 12:15:23', 1),
-('85d4e8', 'Aris', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1987-12-27 00:00:00', '2014-01-06 12:15:23', 1),
-('8a6934', 'Paul', NULL, 'Soriano', 00001, 1, '2014-01-06 05:15:23', '1981-10-26 00:00:00', '2014-01-06 12:15:23', 1),
-('8cde7d', 'Michael', NULL, 'Lorenzo', 00001, 1, '2014-01-06 05:15:23', '1989-10-18 00:00:00', '2014-01-06 12:15:23', 1),
-('8ce003', 'Jude', NULL, 'Lanuza', 00001, 1, '2014-01-06 05:13:15', '1984-12-11 00:00:00', '2014-01-06 12:14:16', 1),
-('8ce453', 'Jude', NULL, 'Lanuza', 00004, 1, '2014-01-06 05:13:15', '1984-12-11 00:00:00', '2014-01-06 12:13:32', 1),
-('9441ec', 'Renaldo', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1982-12-12 00:00:00', '2014-01-06 12:15:23', 1),
-('9adaff', 'Alvin', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1983-10-29 00:00:00', '2014-01-06 12:15:23', 1),
-('a1fcdf', 'Aiden', NULL, 'Castro', 00001, 1, '2014-01-06 05:15:23', '1991-11-20 00:00:00', '2014-01-06 12:15:23', 1),
-('acb282', 'Ronnie', NULL, 'Soriano', 00001, 1, '2014-01-06 05:15:23', '1991-10-13 00:00:00', '2014-01-06 12:15:23', 1),
-('adfcf3', 'Ronnelyn', NULL, 'Velasco', 00001, 1, '2014-01-06 05:15:23', '1990-10-19 00:00:00', '2014-01-06 12:15:24', 1),
-('b04eb6', 'Jude', NULL, 'Duncan', 00001, 1, '2014-01-06 05:15:23', '1988-10-10 00:00:00', '2014-01-06 12:15:23', 1),
-('bfe55b', 'Claud', NULL, 'Rincon', 00001, 1, '2014-01-06 05:15:23', '1986-10-19 00:00:00', '2014-01-06 12:15:23', 1),
-('c18bb4', 'Moose', NULL, 'Nelito', 00001, 1, '2014-01-06 05:15:23', '1992-12-22 00:00:00', '2014-01-06 12:15:24', 1),
-('c25220', 'Paula', NULL, 'Asperas', 00001, 1, '2014-01-06 05:15:23', '1990-11-19 00:00:00', '2014-01-06 12:15:23', 1),
-('c943ab', 'James', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1987-12-20 00:00:00', '2014-01-06 12:15:23', 1),
-('d1e2d7', 'Ronnelyn', NULL, 'Lorenzo', 00001, 1, '2014-01-06 05:15:23', '1991-11-13 00:00:00', '2014-01-06 12:15:24', 1),
-('d42319', 'Michael', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1992-12-10 00:00:00', '2014-01-06 12:15:24', 1),
-('d59b23', 'Corey', NULL, 'Cruz', 00001, 1, '2014-01-06 05:15:23', '1985-12-29 00:00:00', '2014-01-06 12:15:23', 1),
-('e270b1', 'Lucas', NULL, 'Nelito', 00001, 1, '2014-01-06 05:15:23', '1981-12-18 00:00:00', '2014-01-06 12:15:23', 1),
-('edc4a8', 'Paul', NULL, 'Lorenzo', 00001, 1, '2014-01-06 05:15:23', '1985-12-12 00:00:00', '2014-01-06 12:15:23', 1),
-('f30c31', 'Paul', NULL, 'Rodriguez', 00001, 1, '2014-01-06 05:15:23', '1985-10-29 00:00:00', '2014-01-06 12:15:23', 1),
-('fb3f13', 'Paolo', NULL, 'Amandilio', 00001, 1, '2014-01-06 05:15:23', '1989-11-29 00:00:00', '2014-01-06 12:15:23', 1),
-('FqgM92', 'Hannah', 'Loreino', 'Ousbourne', 00001, 1, '2014-01-20 09:09:42', '1985-01-08 00:00:00', '2014-01-20 09:09:42', 1),
-('W7bjZk', 'Roselyn', 'Cayabyab', 'Reyes', 00001, 1, '2013-11-12 11:26:23', '1989-11-07 00:00:00', '2014-01-06 11:38:02', 1);
+INSERT INTO `ems_employee` (`employee_id`, `firstname`, `middlename`, `lastname`, `position_no`, `employee_type`, `date_added`, `birthdate`, `date_modified`, `status`, `relation_stat`) VALUES
+('0af772', 'Jonnathan', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1983-10-17 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('0df96f', 'Michael', NULL, 'Amandilio', 00001, 1, '2014-01-06 05:15:23', '1984-11-23 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('0fdefa', 'Michael', NULL, 'Soriano', 00001, 1, '2014-01-06 05:15:23', '1991-11-14 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('10fcfa', 'Grace', NULL, 'Amoura', 00001, 1, '2014-01-06 05:15:23', '1988-10-25 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('114568', 'Paolo', NULL, 'Lucio', 00001, 1, '2014-01-06 05:15:23', '1982-10-10 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('11b3c5', 'Paul', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1985-12-15 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('12f480', 'Christine', NULL, 'Argente', 00001, 1, '2014-01-06 05:15:23', '1990-11-13 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('13b076', 'Rose', NULL, 'Castro', 00001, 1, '2014-01-06 05:15:23', '1989-11-24 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('1b73d2', 'Jonnathan', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1988-12-18 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('2a2d54', 'Jude', NULL, 'Asperas', 00001, 1, '2014-01-06 05:15:23', '1987-12-17 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('2d2f7c', 'James', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1991-11-10 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('2e4bd9', 'Jonnathan', NULL, 'Amoura', 00001, 1, '2014-01-06 05:15:23', '1992-12-11 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('31a18d', 'Jason', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1989-12-16 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('32358d', 'Jason', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1982-11-20 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('346e19', 'Rose', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1986-11-22 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('3e8bf4', 'Alvin', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1992-12-21 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('44cd4c', 'Grace', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1989-11-23 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('48fa63', 'Lucas', NULL, 'Reyes', 00001, 1, '2014-01-06 05:15:23', '1986-12-13 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('4bdb38', 'Sandra', NULL, 'Rincon', 00001, 1, '2014-01-06 05:15:23', '1982-12-16 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('4e6318', 'Ronnelyn', NULL, 'Nelito', 00001, 1, '2014-01-06 05:15:23', '1987-10-12 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('506b77', 'Max', NULL, 'Argente', 00001, 1, '2014-01-06 05:15:23', '1989-12-12 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('57c166', 'Alvin', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1980-10-12 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('58cd9b', 'Michael', NULL, 'Abalos', 00001, 1, '2014-01-06 05:15:23', '1987-12-11 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('595862', 'Alvin', NULL, 'Rodriguez', 00001, 1, '2014-01-06 05:15:23', '1988-11-29 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('62f682', 'Corey', NULL, 'Amandilio', 00001, 1, '2014-01-06 05:15:23', '1992-12-23 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('67c5e1', 'Corey', NULL, 'Daracen', 00001, 1, '2014-01-06 05:15:23', '1980-11-24 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('6ee6a7', 'Max', NULL, 'Duncan', 00001, 1, '2014-01-06 05:15:23', '1985-12-10 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('717208', 'Christine', NULL, 'Castro', 00001, 1, '2014-01-06 05:15:23', '1985-10-13 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('72473f', 'Jonnathan', NULL, 'Lanuza', 00001, 1, '2014-01-06 05:15:23', '1988-11-18 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('7bcbaY', 'Analyn', 'Chua', 'Sanchez', 00002, 1, '2013-12-05 18:11:22', '1989-12-06 00:00:00', '2014-01-06 11:38:02', 1, 1),
+('7eeb24', 'Corey', NULL, 'Argente', 00001, 1, '2014-01-06 05:15:23', '1988-11-17 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('85d4e8', 'Aris', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1987-12-27 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('8a6934', 'Paul', NULL, 'Soriano', 00001, 1, '2014-01-06 05:15:23', '1981-10-26 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('8cde7d', 'Michael', NULL, 'Lorenzo', 00001, 1, '2014-01-06 05:15:23', '1989-10-18 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('8ce003', 'Jude', NULL, 'Lanuza', 00001, 1, '2014-01-06 05:13:15', '1984-12-11 00:00:00', '2014-01-06 12:14:16', 1, 1),
+('8ce453', 'Jude', NULL, 'Lanuza', 00004, 1, '2014-01-06 05:13:15', '1984-12-11 00:00:00', '2014-01-06 12:13:32', 1, 1),
+('9441ec', 'Renaldo', NULL, 'Padilla', 00001, 1, '2014-01-06 05:15:23', '1982-12-12 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('9adaff', 'Alvin', NULL, 'Taylor', 00001, 1, '2014-01-06 05:15:23', '1983-10-29 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('a1fcdf', 'Aiden', NULL, 'Castro', 00001, 1, '2014-01-06 05:15:23', '1991-11-20 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('acb282', 'Ronnie', NULL, 'Soriano', 00001, 1, '2014-01-06 05:15:23', '1991-10-13 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('adfcf3', 'Ronnelyn', NULL, 'Velasco', 00001, 1, '2014-01-06 05:15:23', '1990-10-19 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('b04eb6', 'Jude', NULL, 'Duncan', 00001, 1, '2014-01-06 05:15:23', '1988-10-10 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('bfe55b', 'Claud', NULL, 'Rincon', 00001, 1, '2014-01-06 05:15:23', '1986-10-19 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('c18bb4', 'Moose', NULL, 'Nelito', 00001, 1, '2014-01-06 05:15:23', '1992-12-22 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('c25220', 'Paula', NULL, 'Asperas', 00001, 1, '2014-01-06 05:15:23', '1990-11-19 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('c943ab', 'James', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1987-12-20 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('d1e2d7', 'Ronnelyn', NULL, 'Lorenzo', 00001, 1, '2014-01-06 05:15:23', '1991-11-13 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('d42319', 'Michael', NULL, 'Santos', 00001, 1, '2014-01-06 05:15:23', '1992-12-10 00:00:00', '2014-01-06 12:15:24', 1, 1),
+('d59b23', 'Corey', NULL, 'Cruz', 00001, 1, '2014-01-06 05:15:23', '1985-12-29 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('e270b1', 'Lucas', NULL, 'Nelito', 00001, 1, '2014-01-06 05:15:23', '1981-12-18 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('edc4a8', 'Paul', NULL, 'Lorenzo', 00001, 1, '2014-01-06 05:15:23', '1985-12-12 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('f30c31', 'Paul', NULL, 'Rodriguez', 00001, 1, '2014-01-06 05:15:23', '1985-10-29 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('fb3f13', 'Paolo', NULL, 'Amandilio', 00001, 1, '2014-01-06 05:15:23', '1989-11-29 00:00:00', '2014-01-06 12:15:23', 1, 1),
+('FqgM92', 'Hannah', 'Loreino', 'Ousbourne', 00001, 1, '2014-01-20 09:09:42', '1985-01-08 00:00:00', '2014-01-20 09:09:42', 1, 1),
+('W7bjZk', 'Roselyn', 'Cayabyab', 'Reyes', 00001, 1, '2013-11-12 11:26:23', '1989-11-07 00:00:00', '2014-01-06 11:38:02', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -269,7 +285,7 @@ INSERT INTO `ems_employee` (`employee_id`, `firstname`, `middlename`, `lastname`
 --
 
 CREATE TABLE IF NOT EXISTS `ems_employee_contact` (
-  `employee_id` char(6) DEFAULT NULL,
+  `employee_id` varchar(75) DEFAULT NULL,
   `mobile` char(11) DEFAULT NULL,
   `telephone` varchar(10) DEFAULT NULL,
   `email` text
@@ -341,7 +357,7 @@ INSERT INTO `ems_employee_contact` (`employee_id`, `mobile`, `telephone`, `email
 --
 
 CREATE TABLE IF NOT EXISTS `ems_employee_leave` (
-  `employee_id` char(6) NOT NULL DEFAULT '',
+  `employee_id` varchar(75) NOT NULL DEFAULT '',
   `r_leaves` int(11) DEFAULT NULL,
   PRIMARY KEY (`employee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -413,7 +429,7 @@ INSERT INTO `ems_employee_leave` (`employee_id`, `r_leaves`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `ems_employee_locations` (
-  `employee_id` char(6) DEFAULT NULL,
+  `employee_id` varchar(75) DEFAULT NULL,
   `address` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -611,11 +627,20 @@ INSERT INTO `pms_accounts` (`account_id`, `username`, `user_password`, `user_lvl
 
 CREATE TABLE IF NOT EXISTS `pms_attendance_monitoring` (
   `attend_no` bigint(20) NOT NULL AUTO_INCREMENT,
-  `emp_no` varchar(10) DEFAULT NULL,
+  `emp_no` varchar(75) DEFAULT NULL,
   `time_in` datetime DEFAULT NULL,
   `timeout` datetime DEFAULT NULL,
   PRIMARY KEY (`attend_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Dumping data for table `pms_attendance_monitoring`
+--
+
+INSERT INTO `pms_attendance_monitoring` (`attend_no`, `emp_no`, `time_in`, `timeout`) VALUES
+(1, '114568', '2014-01-23 06:00:00', '2014-01-23 16:00:00'),
+(2, '114568', '2014-01-24 07:00:00', '2014-01-24 16:00:00'),
+(3, '114568', '2013-12-31 07:00:00', '2013-12-31 18:00:00');
 
 -- --------------------------------------------------------
 
@@ -624,9 +649,12 @@ CREATE TABLE IF NOT EXISTS `pms_attendance_monitoring` (
 --
 
 CREATE TABLE IF NOT EXISTS `pms_deduction` (
-  `deduction_no` tinyint(3) unsigned zerofill NOT NULL AUTO_INCREMENT,
-  `name` varchar(75) DEFAULT NULL,
-  `rate` decimal(5,2) DEFAULT NULL,
+  `deduction_no` int(11) NOT NULL AUTO_INCREMENT,
+  `from_range` decimal(8,2) DEFAULT NULL,
+  `to_range` decimal(8,2) DEFAULT NULL,
+  `sss` decimal(8,2) DEFAULT NULL,
+  `pagibig` decimal(8,2) DEFAULT NULL,
+  `philhealth` decimal(8,2) DEFAULT NULL,
   PRIMARY KEY (`deduction_no`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
@@ -634,10 +662,10 @@ CREATE TABLE IF NOT EXISTS `pms_deduction` (
 -- Dumping data for table `pms_deduction`
 --
 
-INSERT INTO `pms_deduction` (`deduction_no`, `name`, `rate`) VALUES
-(001, 'SSS', '0.03'),
-(002, 'PhilHealth', '0.03'),
-(003, 'Pag-Ibig', '0.03');
+INSERT INTO `pms_deduction` (`deduction_no`, `from_range`, `to_range`, `sss`, `pagibig`, `philhealth`) VALUES
+(1, '4000.00', '8000.00', '80.00', '80.00', '80.00'),
+(2, '8000.00', '100000.00', '100.00', '100.00', '100.00'),
+(3, '10000.00', '120000.00', '150.00', '150.00', '150.00');
 
 -- --------------------------------------------------------
 
@@ -646,7 +674,7 @@ INSERT INTO `pms_deduction` (`deduction_no`, `name`, `rate`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pms_logged_employee` (
-  `employee_id` char(6) DEFAULT NULL
+  `employee_id` varchar(75) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -699,29 +727,48 @@ INSERT INTO `tms_accounts` (`account_id`, `username`, `user_password`, `user_lvl
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tms_company`
+--
+
+CREATE TABLE IF NOT EXISTS `tms_company` (
+  `company_no` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(75) DEFAULT NULL,
+  PRIMARY KEY (`company_no`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+--
+-- Dumping data for table `tms_company`
+--
+
+INSERT INTO `tms_company` (`company_no`, `name`) VALUES
+(1, 'Sony Inc.'),
+(2, 'Samsung'),
+(3, 'Toshiba');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tms_delivers`
 --
 
 CREATE TABLE IF NOT EXISTS `tms_delivers` (
   `deliver_id` int(11) NOT NULL AUTO_INCREMENT,
-  `receiver` varchar(75) DEFAULT NULL,
   `date_receiving` datetime DEFAULT NULL,
   `date_issued` datetime DEFAULT NULL,
   `details` text,
   `delivery_stat` int(11) DEFAULT NULL,
+  `driver_id` varchar(75) DEFAULT NULL,
+  `company_no` bigint(20) DEFAULT NULL,
+  `market_no` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`deliver_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `tms_delivers`
 --
 
-INSERT INTO `tms_delivers` (`deliver_id`, `receiver`, `date_receiving`, `date_issued`, `details`, `delivery_stat`) VALUES
-(1, 'Sony Inc.', '0000-00-00 00:00:00', '2013-11-17 06:19:34', 'sony products', 1),
-(2, 'Sony Inc.', '2013-11-19 11:28:00', '2013-11-17 06:21:59', 'sony products', 1),
-(3, 'Sony Inc.', '2013-11-19 11:28:00', '2013-11-17 06:24:42', 'sony products', 1),
-(4, 'Sony Inc.', '2013-11-19 11:28:00', '2013-11-17 06:25:10', 'sony products', 1),
-(5, 'Samsung', '2013-11-14 16:00:00', '2013-11-17 06:26:28', 'one product to be delivered', 1);
+INSERT INTO `tms_delivers` (`deliver_id`, `date_receiving`, `date_issued`, `details`, `delivery_stat`, `driver_id`, `company_no`, `market_no`) VALUES
+(2, '2014-01-30 17:00:00', '2014-01-22 00:59:28', 'joijmlojio', 1, '0af772', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -742,6 +789,99 @@ CREATE TABLE IF NOT EXISTS `tms_delivery_status` (
 INSERT INTO `tms_delivery_status` (`deliver_stat`, `label`) VALUES
 (1, 'On-Delivery'),
 (2, 'Received');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tms_driver_availablity`
+--
+
+CREATE TABLE IF NOT EXISTS `tms_driver_availablity` (
+  `employee_id` varchar(75) DEFAULT NULL,
+  `availability` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tms_driver_availablity`
+--
+
+INSERT INTO `tms_driver_availablity` (`employee_id`, `availability`) VALUES
+('0af772', 1),
+('0df96f', 1),
+('0fdefa', 1),
+('10fcfa', 1),
+('114568', 1),
+('11b3c5', 1),
+('12f480', 1),
+('13b076', 1),
+('1b73d2', 1),
+('2a2d54', 1),
+('2d2f7c', 1),
+('2e4bd9', 1),
+('31a18d', 1),
+('32358d', 1),
+('346e19', 1),
+('3e8bf4', 1),
+('44cd4c', 1),
+('48fa63', 1),
+('4bdb38', 1),
+('4e6318', 1),
+('506b77', 1),
+('57c166', 1),
+('58cd9b', 1),
+('595862', 1),
+('62f682', 1),
+('67c5e1', 1),
+('6ee6a7', 1),
+('717208', 1),
+('72473f', 1),
+('7bcbaY', 1),
+('7eeb24', 1),
+('85d4e8', 1),
+('8a6934', 1),
+('8cde7d', 1),
+('8ce003', 1),
+('8ce453', 1),
+('9441ec', 1),
+('9adaff', 1),
+('a1fcdf', 1),
+('acb282', 1),
+('adfcf3', 1),
+('b04eb6', 1),
+('bfe55b', 1),
+('c18bb4', 1),
+('c25220', 1),
+('c943ab', 1),
+('d1e2d7', 1),
+('d42319', 1),
+('d59b23', 1),
+('e270b1', 1),
+('edc4a8', 1),
+('f30c31', 1),
+('fb3f13', 1),
+('FqgM92', 1),
+('W7bjZk', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tms_marketplace`
+--
+
+CREATE TABLE IF NOT EXISTS `tms_marketplace` (
+  `market_no` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(75) DEFAULT NULL,
+  `address` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`market_no`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `tms_marketplace`
+--
+
+INSERT INTO `tms_marketplace` (`market_no`, `name`, `address`) VALUES
+(1, 'Pioneer Centre Supermart', '8006 Pioneer St., Brgy. Kapitolyo, Pasig City, Metro Manila, Pioneer, Pasig'),
+(2, 'Puregold Prince Club Inc. (PPCI-SHAW)', '312 Shaw Blvd., Liberty Center, Mandaluyong City');
 
 -- --------------------------------------------------------
 

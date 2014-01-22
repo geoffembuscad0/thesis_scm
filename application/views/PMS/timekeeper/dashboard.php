@@ -14,7 +14,7 @@
 		<table class="InquiryDocumentsSales">
 			<thead>
 				<tr>
-					<th>Employee ID</th>
+					<th>ID Code</th>
 					<th>Employee</th>
 					<th>Position</th>
 					<th>Department</th>
@@ -30,7 +30,55 @@
 					<td><?php echo $employee['pos_name'];?></td>
 					<td><?php echo $employee['department'];?></td>
 					<td><?php echo round($employee['total_hours']);?></td>
-					<td><button class="approve" onClick="self.location='<?php echo URL::site('pms/print_payslip?employee_id='.$employee['employee_id']);?>'">Print Payslip</button></td>
+					<td>
+					<button id="showEmployeeLogs<?php echo $employee['employee_id'];?>" class="approve">View Employee Logs</button>
+					<button class="approve" onClick="self.location='<?php echo URL::site('pms/print_payslip?employee_id='.$employee['employee_id']);?>'">Print Payslip</button>
+					<div id="employeeLogs<?php echo $employee['employee_id'];?>" class="reveal-modal">
+						<p class="close-reveal-modal">close[x]</p>
+						<table class="InquiryDocumentsSales">
+						<thead>
+							<tr><th colspan='2'>Employee Time Logs</th></tr>
+						</thead>
+						<tbody>
+						</tbody>
+						</table>
+						<table class="InquiryDocumentsSales">
+							<thead>
+								<tr><th>Date</th><th>Time In</th><th>Time Out</th><th>Hours Worked</th><th>OT Hours</th></tr>
+							</thead>
+							<tbody>
+								<?php foreach($employee['employee_logs'] AS $logs){ ?>
+									<tr>
+										<td><?php echo date_format(date_create($logs['time_in']), "m/d/Y");?></td>
+										<td><?php echo date_format(date_create($logs['time_in']), "g:i A");?></td>
+										<td><?php echo date_format(date_create($logs['timeout']), "g:i A");?></td>
+										<td><?php echo round((strtotime($logs['timeout']) - strtotime($logs['time_in']))/3600, 1);?></td>
+										<td><?php echo round((strtotime($logs['timeout']) - strtotime($logs['time_in']))/3600, 1) - 8; ?></td>
+									</tr>
+								<?php } ?>
+								<tr>
+									<td colspan='5'>
+										<button id='printlogs<?php echo $employee['employee_id'];?>' class='approve' style='padding-top: 5px;padding-bottom:5px;width:98%;font-size:18px;'>Print Log Records</button>
+										<script type='text/javascript'>
+										$(document).ready(function(){
+											$('#printlogs<?php echo $employee['employee_id'];?>').on('click', function(){
+												self.location = '<?php echo URL::site('pms/print_logs?employee_id='. $employee['employee_id'],null,false);?>';
+											});
+										});
+										</script>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<script type="text/javascript">
+					$(document).ready(function(){
+						$("#showEmployeeLogs<?php echo $employee['employee_id'];?>").on('click', function(){
+							$("#employeeLogs<?php echo $employee['employee_id'];?>").reveal();
+						});
+					});
+					</script>
+					</td>
 				</tr>
 			<?php } ?>
 			</tbody>

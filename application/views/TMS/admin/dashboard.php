@@ -31,7 +31,7 @@
 						<td>
 							<button id="viewDeliver<?php echo md5($deliverRecord['deliver_id']);?>" class="view">View</button>
 							<button id="printDeliver<?php echo md5($deliverRecord['deliver_id']);?>" class="approve">Print</button>
-							<button id="deleteDeliver<?php echo md5($deliverRecord['deliver_id']);?>" class="deny">Delete</button>
+							<button id="deleteDelivery<?php echo md5($deliverRecord['deliver_id']);?>" class="deny">Delete</button>
 							
 							<div class="reveal-modal" id="viewDeliverModal<?php echo sha1($deliverRecord['deliver_id']);?>">
 								<p class="close-reveal-modal" style="cursor:pointer;">close[x]</p>
@@ -94,8 +94,7 @@
 									</tbody>
 								</table>
 							</div>
-							
-							<script>
+							<script type="text/javascript">
 							$(document).ready(function(){
 								$("#viewDeliver<?php echo md5($deliverRecord['deliver_id']);?>").on('click', function(){
 									$("#viewDeliverModal<?php echo sha1($deliverRecord['deliver_id']);?>").reveal();
@@ -106,7 +105,16 @@
 								});
 
 								$("#deleteDelivery<?php echo md5($deliverRecord['deliver_id']);?>").on('click', function(){
-									
+									$.ajax({
+										url : '<?php echo URL::site('tms/delete_delivery');?>',
+										type: 'POST',
+										data: { delivery_id: '<?php echo $deliverRecord['deliver_id'];?>'},
+										success: function(responseDeliveryDelete){
+											alert('Delivery Record has been delete.');
+											self.location = '<?php echo URL::site('tms/admin_dashboard', null, false);?>';
+												
+										}
+									});
 								});
 							});
 							</script>

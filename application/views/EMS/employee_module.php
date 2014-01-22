@@ -54,11 +54,9 @@
 					</td>
 					<td style='font-size: 18px;background-color: #4282d3; color: #fff;'>Type Of Leave:</td>
 					<td style="background:#fff; font-size: 18px;">
-					<?php echo Form::radio('type_leave', 'medical'); ?>Medical
-					<?php echo Form::radio('type_leave', 'family');?>Family
-					<?php echo Form::radio('type_leave', 'personal');?>Personal
-					<?php echo Form::radio('type_leave', 'military');?>Military
-					<?php echo Form::radio('type_leave', 'other');?>Other
+					<?php echo Form::radio('type_leave', 'maternity leave'); ?>Maternity Leave
+					<?php echo Form::radio('type_leave', 'paternity filial leave');?>Paternity Filial Leave
+					<?php echo Form::radio('type_leave', 'emergency leave');?>Emergency Leave
 					</td>
 				</tr>
 			</tbody>

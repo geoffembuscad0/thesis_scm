@@ -9,10 +9,9 @@
 <?php echo form::close(); ?>
 <?php echo $message_login; ?>
 </script>
-</div><div class="footer">Copyright Teresa Marble Corporation 2013. All Rights Reserved</div>
+</div><div class="footer">Copyright Stellar Cargo Movers 2013. All Rights Reserved</div>
 </div>
 <script>
-// Geoffrey Updated Nov 21
 $(document).ready(function(){
 	$("#inquiryList").hide();
 });

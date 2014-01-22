@@ -260,11 +260,16 @@ class Controller_Ems extends Controller {
 		$inputs['date_leaving'] = $this->request->post('date_leaving');
 		$inputs['no_of_days'] = $this->request->post('no_of_days');
 		$inputs['reason'] = $this->request->post('reason');
-		$this->obj['ems_logic']->send_leave($inputs);
+		
+		if($this->obj['ems_logic']->validate_leaves($inputs['employee_id']) >= 0){
+			$this->obj['ems_logic']->send_leave($inputs);
 			echo "<td style='background:#73FF73;color:#008C00;font-weight:bold;'>";
 			echo "Request successfully submited.";
 			echo "</td>";
-// 		}
+		} else if($this->obj['ems_logic']->validate_leaves($inputs['employee_id']) ==0){
+			echo "<td style='background:#FF7373;color:#B30000;font-weight:bold;'>Insuficient Leaves</td>";
+		}
+		
 	}
 	public function action_employee_home(){
 		$presentation_tier = View::factory ( "ems/employee_module" );
@@ -307,6 +312,23 @@ class Controller_Ems extends Controller {
 	public function action_reject_leave(){
 		$leave_id = $this->request->post('leave_id');
 		$this->obj['ems_logic']->reject_leave($leave_id);
+	}
+	public function action_employee_statistics(){
+		$presentation_tier = View::factory('EMS/admin/employee_statistics');
+		$presentation_tier->head = $this->obj ['webstructure']->head ( "HR Dashboard");
+		$presentation_tier->page_header = $this->obj ['webstructure']->page_header ( $this->obj ['webstructure']->ems_admin_navigation () );
+		$presentation_tier->account_name = $this->obj['acc_logic']->get_account_name(Session::instance()->get(md5('ems').'admin_sess'), "ems");
+		
+		$this->response->body($presentation_tier);
+	}
+	public function action_print_statistics(){
+		$presentation_tier = View::factory('EMS/admin/print_statistics');
+		$presentation_tier->head = $this->obj ['webstructure']->head ( "HR Dashboard");
+		$presentation_tier->time = $presentation_tier->time = date ( "l, " . ucfirst ( "F" ) . " d Y - g:i A" );
+		$presentation_tier->statistics = array(
+			
+		);
+		$this->response->body($presentation_tier);
 	}
 	public function action_admin_dashboard(){
 		$this->obj['response']->headers(array(
