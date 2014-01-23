@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 22, 2014 at 04:08 AM
+-- Generation Time: Jan 23, 2014 at 02:40 AM
 -- Server version: 5.6.11
 -- PHP Version: 5.5.1
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `audit_trail` (
   `action_taken` varchar(75) DEFAULT NULL,
   `datetime_taken` datetime DEFAULT NULL,
   PRIMARY KEY (`audit_no`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=50 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=51 ;
 
 --
 -- Dumping data for table `audit_trail`
@@ -89,7 +89,8 @@ INSERT INTO `audit_trail` (`audit_no`, `username`, `action_taken`, `datetime_tak
 (00000000000000000046, '', 'Logged Out', '2014-01-22 04:01:55'),
 (00000000000000000047, 'admin-ems.admin', 'Logged In', '2014-01-22 04:02:08'),
 (00000000000000000048, 'admin-ems.admin', 'Logged Out', '2014-01-22 08:31:17'),
-(00000000000000000049, 'michelle@yahoo.com', 'Logged In', '2014-01-22 08:35:27');
+(00000000000000000049, 'michelle@yahoo.com', 'Logged In', '2014-01-22 08:35:27'),
+(00000000000000000050, 'michelle@yahoo.com', 'Logged In', '2014-01-22 13:50:11');
 
 -- --------------------------------------------------------
 
