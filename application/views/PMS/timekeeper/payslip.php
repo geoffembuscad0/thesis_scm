@@ -7,6 +7,7 @@ table tr th,td{border: 1px solid #000;padding: 6px 6px 6px 6px;text-align:left;}
 </style>
 <page>
 <h1>Stellar Cargo Movers</h1><h2>Payroll Payslip</h2>
+<!-- Request daw ito ngayon! -->
 <h3 class='right'>Date: <?php echo $date;?></h3>
 <table>
 
