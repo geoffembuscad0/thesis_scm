@@ -54,9 +54,22 @@ class Controller_Pms extends Controller {
 		$presentation_tier->page_header = $this->obj ['webstructure']->page_header ( $this->obj ['webstructure']->pms_personnel_navigation () );
 		
 		$presentation_tier->account_name = array();//$this->obj['acc_logic']->get_account_name(Session::instance()->get('pms_id'), "pms");
-		$presentation_tier->deductions_table = $this->obj['pms_logic']->get_deduction_table();
-		
+
+		$presentation_tier->sss_deductions = $this->obj['pms_logic']->get_sss_deductions();
+		$presentation_tier->philhealth_deductions = $this->obj['pms_logic']->get_philhealth_deductions();
+		$presentation_tier->pagibig_deduction = $this->obj['pms_logic']->get_pagibig_deduction();
+				
 		$this->response->body($presentation_tier);
+	}
+	public function action_save_deduction_ph(){
+		$data = array('ded_no'=>$this->request->post('ded_no'), 'deduction'=>$this->request->post('deduction'));
+		$this->obj['pms_logic']->update_ph_deduction($data);
+		echo "Deduction has been changed";
+	}
+	public function action_save_deduction_sss(){
+		$data = array('ded_no'=>$this->request->post('ded_no'), 'deduction'=>$this->request->post('deduction'));
+		$this->obj['pms_logic']->update_sss_deduction($data);
+		echo "Deduction has been changed";
 	}
 	public function action_update_deduction(){
 		$data = array();
@@ -106,33 +119,6 @@ class Controller_Pms extends Controller {
 		}
 		return $time_table;
 	}
-// 	public function action_test_script($employee_id = "00f924"){ // Testing Script
-// 		$time_table = array();
-// 		/*Function Reference in getting the query*/
-// 		$timesheet_contents = explode("/",file_get_contents(URL::site("timesheet.txt",null,false)));
-// 		echo "<pre>";
-// 		foreach($timesheet_contents AS $time_pieces){
-// 			if(strpos($time_pieces, date("Y-m")) !== false){
-// 				if($employee_id == $this->get_array_element(explode("_", $time_pieces),0)){
-// 					$time_table[][] = array(
-// 							$this->get_array_element(explode("_", $time_pieces),0),
-// 							$this->get_array_element(explode("_", $time_pieces),1),
-// 							$this->get_array_element(explode("_", $time_pieces),2),
-// 							'hours_worked' => (strtotime($this->get_array_element(explode("_",$time_pieces),2)) - strtotime($this->get_array_element(explode("_",$time_pieces),1))) / (60 * 60),
-// 							'OT_hours' => $this->validate_OT_hours((strtotime($this->get_array_element(explode("_",$time_pieces),2)) - strtotime($this->get_array_element(explode("_",$time_pieces),1))) / (60 * 60))
-// 					);
-// 				}
-// 			}
-// 		}
-// 		/*END of Function Ref*/
-// 		echo "<pre>";
-// 		print_r($time_table);
-// 		echo "Total Hours: ";
-// 		echo $this->get_employee_total_hours($employee_id);
-// 		echo "<br>";
-// 		echo "Total OT Hours: ";
-// 		echo $this->get_employee_total_OT_hours($employee_id);
-// 	} // YEAR DUDE!
 	public function get_employee_total_hours($employee_id = null, $all = false){ // working
 		$total_hours = 0;
 		foreach($this->obj['pms_logic']->get_hours_differences($employee_id) AS $diffs){
@@ -143,9 +129,11 @@ class Controller_Pms extends Controller {
 	public function get_employee_total_OT_hours($employee_id = null, $all = false){
 		$total_ots = 0;
 		foreach($this->obj['pms_logic']->get_hours_differences($employee_id) AS $diffs){
-			$total_ots += $diffs['diff'] - 8;
+			if($diffs > 8){
+				$total_ots += $diffs['diff'] - 8;
+			}
 		}
-		return $total_ots;
+		return ($total_ots < 0) ? 0 : $total_ots;
 	}
 	public function get_monthly_record($employee){
 		return $this->obj['pms_logic']->get_employee_logs($employee);
@@ -180,6 +168,7 @@ class Controller_Pms extends Controller {
 				"search_query"=>$this->request->query('search_query')
 		);
 		$presentation_tier->employees = array();
+		
 		foreach($this->obj['ems_logic']->get_employees($filter_datas,2) AS $employee){
 			$presentation_tier->employees[] = array(
 				'employee_id'	=> $employee['employee_id'],
@@ -190,10 +179,11 @@ class Controller_Pms extends Controller {
 				'pos_name'		=> $employee['pos_name'],
 				'department'	=> $employee['dept_name'],
 				'total_hours'	=> $this->get_employee_total_hours($employee['employee_id']),
-				'employee_logs'=>$this->obj['pms_logic']->get_employee_logs($employee['employee_id'])
+				'employee_logs' => $this->obj['pms_logic']->get_employee_logs($employee['employee_id'])
 			);
+
+			
 		}
-		
 		$this->response->body($presentation_tier);
 	}
 	public function action_personnel_logout(){
@@ -228,17 +218,10 @@ class Controller_Pms extends Controller {
 			$datas[$coun]['dept'] = $employee['dept_name'];
 			$datas[$coun]['employee_rate'] = $this->obj['pms_logic']->get_employee_rate($employee['employee_id']);
 			$datas[$coun]['gross_pay'] = $this->get_employee_total_hours($employee['employee_id']) * $datas[$coun]['employee_rate'];
-			$datas[$coun]['total_hours'] = $this->get_employee_total_OT_hours($employee['employee_id']);
-			$datas[$coun]['deductions'] = $this->obj['pms_logic']->get_deduction($datas[$coun]['gross_pay']);
-			if(count($datas[$coun]['deductions']) > 0){
-				$datas[$coun]['deduction']['sss'] = $datas[$coun]['deductions'][0]['sss'];
-				$datas[$coun]['deduction']['philhealth'] = $datas[$coun]['deductions'][0]['philhealth'];
-				$datas[$coun]['deduction']['pagibig'] = $datas[$coun]['deductions'][0]['pagibig'];
-			} else {
-				$datas[$coun]['deduction']['sss'] = 0;
-				$datas[$coun]['deduction']['philhealth'] = 0;//$datas[$coun]['deductions'][0]['philhealth'];
-				$datas[$coun]['deduction']['pagibig'] = 0;//$datas[$coun]['deductions'][0]['pagibig'];
-			}
+			$datas[$coun]['total_hours'] = $this->obj['pms_logic']->get_total_hours_worked($employee['employee_id']);
+			$datas[$coun]['deduction']['sss'] = $this->obj['pms_logic']->get_sss_deduction($datas[$coun]['gross_pay']);
+			$datas[$coun]['deduction']['philhealth'] = $this->obj['pms_logic']->get_philhealth_deduction($datas[$coun]['gross_pay']);
+			$datas[$coun]['deduction']['pagibig'] = $this->obj['pms_logic']->get_pagibig_deduction();
 			$datas[$coun]['net_pay'] = $datas[$coun]['gross_pay'] - array_sum($datas[$coun]['deduction']);
 			$coun++;
 		}
@@ -263,7 +246,7 @@ class Controller_Pms extends Controller {
 		->set('employee_info', $employee_info)
 		->set('logs', $employee_logs)
 		->set('absents', $no_of_absents)
-		->set('date', date('m/d/Y'))
+		->set('date', date('M d Y'))
 		->render();
 		exit();
 	}
@@ -274,10 +257,12 @@ class Controller_Pms extends Controller {
 		} else {
 			trigger_error('Employee Invalid!');
 		}
+
 		$employee_name		= null;
 		$employee_type 		= null;
 		$employee_dept		= null;
 		$employee_position	= null;
+		
 		foreach($this->obj['ems_logic']->get_employee($employee_id) AS $employee_data){
 			$employee_name = $this->get_array_element($employee_data,'lastname') . ", ";
 			$employee_name .= $this->get_array_element($employee_data,'firstname') . " ";
@@ -297,6 +282,9 @@ class Controller_Pms extends Controller {
 			$marital_status = "Married";
 		}
 		
+		// computation of single and married
+		$employee_single_married_twenty = $employee_rate * 0.2;
+		
 		// computes for marital status rate
 		if($employee_marital_stat == 2){
 			$employee_marital_stat_rate = $employee_rate * 0.2;
@@ -312,13 +300,12 @@ class Controller_Pms extends Controller {
 
 		// Deductions
 		$deductions = array();
-
-		foreach($this->obj['pms_logic']->get_deduction($gross_pay) AS $deduction){
-			$deductions['SSS'] = $deduction['sss'];
-			$deductions['PagIbig'] = $deduction['pagibig'];
-			$deductions['philhealth'] = $deduction['philhealth'];
-		}
-
+		$deductions['SSS'] = $this->obj['pms_logic']->get_sss_deduction($gross_pay); // IMPORTANT
+		$deductions['PagIbig'] = $this->obj['pms_logic']->get_philhealth_deduction($gross_pay); // IMPORTANT
+		$deductions['philhealth'] = $this->obj['pms_logic']->get_pagibig_deduction(); // IMPORTANT
+// 		echo "<pre>";
+// 		print_r($deductions);
+// 		die();
 		$total_deduction = array_sum($deductions);
 
 		// Gets Total NET PAY
@@ -341,7 +328,8 @@ class Controller_Pms extends Controller {
 		->set('gross_pay',$gross_pay)
 		->set('deductions', $deductions)
 		->set('net_value', $net_pay)
-		->set('date', date('m/d/Y'))
+		->set('employee_single_married_twenty', $employee_single_married_twenty)
+		->set('date', date('M d Y'))
 		->render();
 		exit();
 	}

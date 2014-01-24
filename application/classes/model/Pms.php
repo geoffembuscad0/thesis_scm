@@ -1,7 +1,68 @@
 <?php
 class Model_Pms extends Model {
-	public function get_deduction($gross_pay){
-		return DB::query(DATABASE::SELECT, "SELECT * FROM pms_deduction WHERE from_range <= ".$gross_pay." AND to_range >= " . $gross_pay . " ")->execute()->as_array();
+	public function get_bir_value($netpay){
+		$sql = "SELECT * FROM pms_bir_tax WHERE sme <= ".$netpay." ORDER BY ded_no DESC LIMIT 1";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		$return_values = array();
+		$data = array();
+		foreach($query AS $q){
+			$data['ex'] = $q['exemption'];
+			$data['sme'] = $q['sme'];
+		}
+		$return_values['excess'] = ($netpay - $data['sme']) * 0.25; // 
+		$return_values['tax'] = $data['ex'] + $return_values['excess']; // computation
+		/*
+		 * Example
+		 * Excess = (netincome-SME)*0.25
+
+			0.25 is status
+
+			Tax = Exemption + excess
+		 */
+		return $return_values;
+	}
+	public function get_sss_deductions(){
+		$sql = "SELECT * FROM pms_deduction_sss ";
+		return DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+	}
+	public function get_philhealth_deductions(){
+		$sql = "SELECT * FROM pms_deduction_philhealth";
+		return DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+	}
+	public function update_ph_deduction($data = array()){
+		$sql = "UPDATE pms_deduction_philhealth SET deduction = '".$data['deduction']."' WHERE ded_no = '".$data['ded_no']."'";
+		DB::query(DATABASE::UPDATE, $sql)->execute();
+	}
+	public function update_sss_deduction($data = array()){
+		$sql = "UPDATE pms_deduction_sss SET deduction_value = '".$data['deduction']."' WHERE ded_no = '".$data['ded_no']."'";
+		DB::query(DATABASE::UPDATE, $sql)->execute();
+	}
+	public function get_sss_deduction($grosspay){
+		$sql = "SELECT * FROM pms_deduction_sss WHERE from_range <= ".$grosspay." AND to_range >= " . $grosspay;
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		$deduction = 0;
+		foreach($query AS $q){
+			$deduction = $q['deduction_value'];
+		}
+		return $deduction;
+	}
+	public function get_philhealth_deduction($grosspay){
+		$sql = "SELECT * FROM pms_deduction_philhealth WHERE from_range <= " . $grosspay . " AND to_range >= " . $grosspay . " ";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		$deduction = 0;
+		foreach($query AS $q){
+			$deduction = $q['deduction'];
+		}
+		return $deduction;
+	}
+	public function get_pagibig_deduction(){ // return 100 value
+		$sql = "SELECT * FROM pms_deduction_pagibig";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		$deduction = 0;
+		foreach($query AS $q){
+			$deduction = $q['deduction'];
+		}
+		return $deduction;
 	}
 	public function get_employee_logs($emp_no){
 		return DB::query(DATABASE::SELECT, "SELECT * from pms_attendance_monitoring WHERE emp_no = '".$emp_no."' AND 
@@ -11,18 +72,37 @@ class Model_Pms extends Model {
 	
 	public function get_employee_absents($emp_id){
 		$query = DB::query(DATABASE::SELECT, "SELECT count(*) as absent FROM ems_leaves WHERE employee_id = '".$emp_id."'")->execute()->as_array();
-		return $query[0]['absent'];
+		$absents = 0;
+		foreach($query AS $q){
+			$absents = $q['absent'];
+		}
+		return $absents;
 	}
 	public function get_number_of_days_worked($employee_no){
 		return DB::query(DATABASE::SELECT, "SELECT COUNT(*) AS days_worked FROM pms_attendance_monitoring WHERE emp_no = '".$employee_no."' AND 
 		DATE_FORMAT(time_in,'%m') = DATE_FORMAT(NOW(),'%m') AND 
 		DATE_FORMAT(timeout, '%m') = DATE_FORMAT(NOW(), '%m')")->execute()->as_array();
 	}
+	public function get_total_hours_worked($employee_id){
+		$sql = "SELECT SUM(TIMESTAMPDIFF(HOUR, time_in, timeout)) AS `total_hours` 
+				FROM pms_attendance_monitoring 
+				WHERE emp_no = '".$employee_id."' 
+				AND DATE_FORMAT(time_in,'%m') = DATE_FORMAT(NOW(),'%m') 
+				AND DATE_FORMAT(timeout,'%m') = DATE_FORMAT(NOW(),'%m')";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		$total_hours = 0;
+		foreach($query AS $q){
+			$total_hours = $q['total_hours'];
+		}
+		return $total_hours;
+	}
 	public function get_hours_differences($employee){
-		$query  = DB::query(DATABASE::SELECT, "SELECT TIMESTAMPDIFF(HOUR, time_in, timeout) AS `diff` 
+		$sql = "SELECT TIMESTAMPDIFF(HOUR, time_in, timeout) AS `diff` 
 		FROM pms_attendance_monitoring
 		WHERE emp_no = '".$employee."' AND DATE_FORMAT(time_in,'%m') = DATE_FORMAT(NOW(),'%m')
-		AND DATE_FORMAT(timeout,'%m') = DATE_FORMAT(NOW(),'%m')")->execute()->as_array();
+		AND DATE_FORMAT(timeout,'%m') = DATE_FORMAT(NOW(),'%m')";
+// 		die($sql);
+		$query  = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
 		return $query;
 	}
 	public function get_deduction_table(){
@@ -38,7 +118,11 @@ class Model_Pms extends Model {
 			INNER JOIN ems_positions ON ems_employee.`position_no` = ems_positions.`position_no`
 			INNER JOIN pms_position_rate ON pms_position_rate.`position_no` = ems_positions.`position_no`
 			WHERE ems_employee.`employee_id` = '".$employee_id."'")->execute()->as_array();
-		return $query[0]['rate'];
+		$rate = 0;
+		foreach($query AS $q){
+			$rate = $q['rate'];
+		}
+		return $rate;
 	}
 	public function login_employee($employee_id ){
 		DB::query(DATABASE::INSERT, "INSERT INTO pms_logged_employee VALUES('".$employee_id."')")->execute();
@@ -58,7 +142,11 @@ class Model_Pms extends Model {
 		$result = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
 		// clears null employee ids
 		DB::query(DATABASE::DELETE, "DELETE FROM pms_logged_employee WHERE employee_id IS NULL")->execute();
-		return $result[0]['existing_log'];
+		$existing_log = 0;
+		foreach($result AS $r){
+			$existing_log = $r['existing_log'];
+		}
+		return $existing_log;
 	}
 	public function attendance_login($employee_id){
 		$sql = "INSERT INTO pms_attendance_monitoring VALUES(NULL,'".$employee_id."',NOW(),NULL)";

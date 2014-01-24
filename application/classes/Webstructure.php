@@ -128,7 +128,7 @@ class Webstructure {
 		$nav = "<ul class='dropdown' style='z-index:2;text-decoration:none;margin-top:-40px;height: 45px;float:right;'>";
 		$nav .= "<li><a href='".URL::base()."ems/hr_dashboard'>Dashboard</a></li>";
 		$nav .= "<li><a href='".URL::site(null,null,false)."pms/deduction_table'>Deduction Table</a></li>";
-		$nav .= "<li><a href='".URL::site(null,null,false)."pms/print_ledger'>Print Ledger</a></li>";
+		$nav .= "<li><a href='".URL::site(null,null,false)."pms/print_ledger'>Print NET Incomes</a></li>";
 		$nav .= "<li><a href='".URL::site(null,null,false)."pms/personnel_logout'>Logout</a></li>";
 		$nav .= "</ul>";
 		return $nav;

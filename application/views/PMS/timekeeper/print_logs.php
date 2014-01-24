@@ -6,7 +6,7 @@ table tr {border: 1px solid #000;}
 table tr th,td{border: 1px solid #000;padding: 6px 6px 6px 6px;text-align:left;}
 </style>
 <page>
-	<h1>Stellar Cargo Movers - Employee Logs</h1>
+	<h1>Teresa Marble Corporation - Employee Logs</h1>
 	<table>
 		<tr>
 			<td>Employee Name:</td>

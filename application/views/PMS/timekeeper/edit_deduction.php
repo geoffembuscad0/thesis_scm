@@ -8,82 +8,172 @@
     <div class="pure-u-2-3" style="background:#6F4E37;text-align:right;color:white;width:50%;">
     	<h1><?php //echo $account_name[0]['firstname']; ?> <?php //echo (empty($account_name[0]['middlename'])) ? "" : ucfirst(substr($account_name[0]['middlename'],0,1)) . "."; ?> <?php //echo $account_name[0]['lastname'];?> | Payroll Personnel</h1>
     </div>
-</div>
-<div class="pure-g" style="text-align: left">
-	<div class="pure-u-2-3" style="width:100%; background:#a63a00;">
-		<table class="InquiryDocumentsSales">
-			<thead>
+</div></br>
+<div class="pure-g">
+	<div class="pure-u-1-3" style="background: #a63800; color: #fff; width: 100%;">
+	<table class="InquiryDocumentsSales">
+		<thead>
+			<tr><th>Pag-Ibig Fund</th></tr>
+		</thead>
+		<tbody>
 			<tr>
-			<th style="text-align:left;">Gross Pay Ranging</th>
-			<th>SSS</th>
-			<th>Pag-Ibig</th>
-			<th>PhilHealth</th>
-			<th></th>
+				<td>PHP<?php echo $pagibig_deduction; ?></td>
 			</tr>
+		</tbody>
+	</table>
+	</div>
+</div>
+</br>
+<div class="pure-g">
+	<div class="pure-u-1-3" style="background:#a63800;color:#fff; width: 48%;margin-left:1%;margin-right:1%;">
+		<h1>SSS Deduction Table</h1>
+	</div>
+	<div class="pure-u-1-3" style="background:#a63800;color:#fff; width: 48%;margin-left:1%;margin-right:1%;">
+		<h1>PhilHealth Deduction Table</h1>
+	</div>
+</div>
+<div class="pure-g">
+	<div class="pure-u-2-3" style="width:48%;margin-left: 1%;margin-right:1%;">
+		<table id="sssTable" class="InquiryDocumentsSales">
+			<thead>
+				<tr><th>Range</th><th>Deduction</th><th>Action</th></tr>
 			</thead>
 			<tbody>
-			<?php foreach($deductions_table AS $ded_table){ ?>
+			<?php foreach($sss_deductions AS $sss){ ?>
 			<tr>
-			<td style="text-align:left;">PHP<?php echo $ded_table['from_range'];?> - PHP<?php echo $ded_table['to_range'];?></td>
-			<td>PHP<?php echo $ded_table['sss'];?></td>
-			<td>PHP<?php echo $ded_table['pagibig'];?></td>
-			<td>PHP<?php echo $ded_table['philhealth'];?></td>
-			<td><button id="editDed<?php echo sha1($ded_table['deduction_no']);?>" class="approve">Edit Deduction</button>
-			<div id="editDeductionModal<?php echo md5($ded_table['deduction_no']);?>" class="reveal-modal">
-				<div class='close-reveal-modal' style='cursor:pointer;'>close[x]</div>
-				<h1>Edit Deduction</h1>
-				<table class="InquiryDocumentsSales">
-					<thead>
-						<th>Price Ranging</th>
-					</thead>
-					<tbody>
-						<td>PHP<?php echo $ded_table['from_range'];?> - PHP<?php echo $ded_table['to_range'];?></td>
-					</tbody>
-				</table>
-				<table class="InquiryDocumentsSales" style="width: 100%;">
-					<thead>
-						<th colspan='6'>Deductions</th>
-					</thead>
-					<tbody>
-					<tr>
-						<td>SSS</td>
-						<td><input id="sss<?php echo $ded_table['deduction_no'];?>" type="text" style="width:100px;" name="sss" value="<?php echo $ded_table['sss'];?>"/></td>
-						<td>PagIbig</td>
-						<td><input id="pagibig<?php echo $ded_table['deduction_no'];?>" type="text" style="width:100px;" name="pagibig" value="<?php echo $ded_table['pagibig'];?>"/></td>
-						<td>PhilHealth</td>
-						<td><input id="philhealth<?php echo $ded_table['deduction_no'];?>" type="text" style="width:100px;" name="philhealth" value="<?php echo $ded_table['philhealth'];?>"/></td>
-						</tr>
-						<tr><td colspan='6'><button id="updateDeduction<?php echo $ded_table['deduction_no'];?>" style="padding-left: 75px;padding-right: 75px;" class="approve">Update Deduction</button></td></tr>
-					</tbody>
-				</table>		
-			</div>
-			<script>
-			$(document).ready(function(){
-				$("#editDed<?php echo sha1($ded_table['deduction_no']);?>").on('click', function(){
-					$("#editDeductionModal<?php echo md5($ded_table['deduction_no']);?>").reveal();
-				});
-
-				$("#updateDeduction<?php echo $ded_table['deduction_no'];?>").on('click',function(){
-					$.ajax({
-						url: '<?php echo URL::site('pms/update_deduction');?>',
-						type: 'POST',
-						data: {
-							ded_no:'<?php echo $ded_table['deduction_no'];?>',
-							sss:$('#sss<?php echo $ded_table['deduction_no'];?>').val(),
-							pagibig: $('#pagibig<?php echo $ded_table['deduction_no'];?>').val(),
-							philhealth: $('#philhealth<?php echo $ded_table['deduction_no'];?>').val()
-						},success:function(reponseUpdateDeduction){
-								alert("Deduction data has been updated.");
-								self.location = '<?php echo URL::site('pms/deduction_table');?>';
-						}
+				<td><?php if($sss['from_range']==14750){ echo "PHP" . $sss['from_range'] . " - High"; } else { echo "PHP" . $sss['from_range'] . "-PHP" . $sss['to_range']; }?></td>
+				<td>PHP<?php echo $sss['deduction_value'];?></td>
+				<td><button id="editSSS<?php echo $sss['ded_no'];?>" class="approve">Edit Deduction</button>
+				<div id="editSSSmodal<?php echo $sss['ded_no'];?>" class="reveal-modal" style="color:#333333;font-size:14px;background-color:#fff;">
+					<p class="close-reveal-modal" style="cursor:pointer;">close[x]</p>
+					<table class="InquiryDocumentsSales">
+						<thead>
+							<tr><th>Edit SSS Deduction</th></tr>
+						</thead>
+						<tbody>
+							<tr>
+							<td>
+							<?php
+							if($sss['from_range']==14750){
+								echo "PHP" . $sss['from_range'] . " - High";
+							} else {
+								echo "PHP" . $sss['from_range'] . "-PHP" . $sss['to_range'];
+							} ?>
+							</td>
+							</tr>
+							<tr>
+							<td>
+							<input type="text" name="deduction" value="<?php echo $sss['deduction_value'];?>"/>
+							</td>
+							</tr>
+							<tr><td><button id="saveDeductionSSS<?php echo $sss['ded_no'];?>" class="approve">Save Deduction</button></td></tr>
+						</tbody>
+					</table>
+				</div>
+				<script>
+				$(document).ready(function(){
+					$("#editSSS<?php echo $sss['ded_no'];?>").on('click', function(){
+						$("#editSSSmodal<?php echo $sss['ded_no'];?>").reveal();
+					});
+					$("#saveDeductionSSS<?php echo $sss['ded_no'];?>").on('click', function(){
+						$.ajax({
+							url: '<?php echo URL::site('pms/save_deduction_sss', null, false);?>',
+							type: 'POST',
+							data: { ded_no: '<?php echo $sss['ded_no'];?>', deduction: $("input[name='deduction']").val() },
+							success:function(ressponseSaveSSS){
+								alert(ressponseSaveSSS);
+								self.location = '<?php echo URL::site('pms/deduction_table', null, false);?>';
+							}
+						});
 					});
 				});
-			});
-			</script>
-			</td>
+				</script>
+				</td>
+			</tr>
+			<?php } ?>
+			</tbody>
+		</table>
+	</div>
+	<div class="pure-u-2-3" style="width:48%;margin-left: 1%;margin-right:1%">
+		<table id="philhealthTable" class="InquiryDocumentsSales">
+			<thead>
+				<tr><th>Range</th><th>Deduction</th><th>Action</th></tr>
+			</thead>
+			<tbody>
+			<?php foreach($philhealth_deductions AS $ph){ ?>
+			<tr>
+				<td><?php
+				if($ph['from_range'] <= 100){
+					echo "PHP" . $ph['to_range'] . " - " . "Below";
+				} elseif($ph['from_range'] == 30000){
+					echo "PHP" . $ph['from_range'] . " - High";
+				} else {
+					echo "PHP" . $ph['from_range'] . "-PHP" . $ph['to_range'];
+				} ?>
+				</td>
+				<td><?php echo "PHP".$ph['deduction'];?></td>
+				<td><button id="philhealthEdit<?php echo $ph['ded_no'];?>" class="approve">Edit Deduction</button>
+				<div id="editPHmodal<?php echo $ph['ded_no'];?>" class="reveal-modal" style="color:#333333;font-size:14px;background-color:#fff;">
+					<p class="close-reveal-modal" style="cursor:pointer;">close[x]</p>
+					<table class="InquiryDocumentsSales">
+						<thead>
+							<tr><th>Edit SSS Deduction</th></tr>
+						</thead>
+						<tbody>
+							<tr>
+							<td>
+							<?php
+							if($ph['from_range'] <= 100){
+								echo "PHP" . $ph['to_range'] . " - " . "Below";
+							} elseif($ph['from_range'] == 30000){
+								echo "PHP" . $ph['from_range'] . " - High";
+							} else {
+								echo "PHP" . $ph['from_range'] . "-PHP" . $ph['to_range'];
+							} ?>
+							</td>
+							</tr>
+							<tr>
+							<td>
+							<input type="text" name="deduction" value="<?php echo $ph['deduction'];?>"/>
+							</td>
+							</tr>
+							<tr class="response"></tr>
+							<tr><td><button id="saveph<?php echo $ph['ded_no'];?>" class="approve">Save Deduction</button></td></tr>
+						</tbody>
+					</table>
+				</div>
+				<script>
+				$(document).ready(function(){
+					$("#philhealthEdit<?php echo $ph['ded_no'];?>").on('click', function(){
+						$("#editPHmodal<?php echo $ph['ded_no'];?>").reveal();
+					});
+					$("#saveph<?php echo $ph['ded_no'];?>").on('click', function(){
+						$.ajax({
+							url: '<?php echo URL::site('pms/save_deduction_ph',null,false);?>',
+							type: 'POST',
+							data: { ded_no: '<?php echo $ph['ded_no']; ?>',deduction:$("input[name='deduction']").val() },
+							success: function(responsesavePH){
+								alert(responsesavePH);
+								self.location = '<?php echo URL::site('pms/deduction_table',null,false);?>';
+							}
+						});
+					});
+				});
+				</script>
+				</td>
 			</tr>
 			<?php } ?>
 			</tbody>
 		</table>
 	</div>
 </div>
+<style type='text/css'>
+.pager { background: #007FFF; color: #fff; text-align: left; width: 100%; }
+.pages-label { font-size: 18px; }
+.page-number { cursor: pointer; font-weight: bold; padding: 10px; font-size: 18px; margin: 10px;}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+
+});
+</script>

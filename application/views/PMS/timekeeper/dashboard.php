@@ -26,7 +26,7 @@
 			<?php foreach($employees AS $employee){?>
 				<tr>
 					<td><?php echo $employee['employee_id']; ?></td>
-					<td><?php echo $employee['firstname'] . ' ' . $employee['lastname'];?></td>
+					<td><?php echo $employee['lastname'] . ', ' .$employee['firstname'];?></td>
 					<td><?php echo $employee['pos_name'];?></td>
 					<td><?php echo $employee['department'];?></td>
 					<td><?php echo round($employee['total_hours']);?></td>
@@ -44,7 +44,7 @@
 						</table>
 						<table class="InquiryDocumentsSales">
 							<thead>
-								<tr><th>Date</th><th>Time In</th><th>Time Out</th><th>Hours Worked</th><th>OT Hours</th></tr>
+								<tr><th>Date</th><th>Time In</th><th>Time Out</th><th>Hours Worked</th></tr>
 							</thead>
 							<tbody>
 								<?php foreach($employee['employee_logs'] AS $logs){ ?>
@@ -53,7 +53,7 @@
 										<td><?php echo date_format(date_create($logs['time_in']), "g:i A");?></td>
 										<td><?php echo date_format(date_create($logs['timeout']), "g:i A");?></td>
 										<td><?php echo round((strtotime($logs['timeout']) - strtotime($logs['time_in']))/3600, 1);?></td>
-										<td><?php echo round((strtotime($logs['timeout']) - strtotime($logs['time_in']))/3600, 1) - 8; ?></td>
+										
 									</tr>
 								<?php } ?>
 								<tr>
@@ -87,8 +87,7 @@
 </div>
 <script text="text/javascript">
 $(document).ready(function(){
-	<?php //echo $verify_applicant_form_script; ?>
-	<?php //echo $ajax_validate_hiree;?>
+	
 	$("#datetimepickbabeh").datetimepicker({
 		timeFormat: "hh:mm tt",
 		dateFormat: "yy-mm-dd",
