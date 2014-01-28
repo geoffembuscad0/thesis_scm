@@ -20,7 +20,7 @@
 				<th>Type</th>
 				<th>Status</th>
 				<th>Date Added</th>
-				<th></th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -28,7 +28,13 @@
 		<td><?php echo Form::select('position_query',$sort_queries['position'],$filter_data['position']); ?></td>
 		<td><?php echo Form::select('department_query',$sort_queries['department'],$filter_data['department']); ?></td>
 		<td><?php echo Form::select('type_query', $sort_queries['type'],$filter_data['type']); ?></td>
-		<td></td>
+		<td>
+		<select name="employee_status">
+		<?php foreach($employee_statuses AS $status_id => $status){ ?>
+		<option value="<?php echo $status_id;?>"><?php echo $status;?></option>
+		<?php } ?>
+		</select>
+		</td>
 		<td><?php echo Form::select('date_query',$sort_queries['date'],$filter_data['date']); ?></td>
 		<td><input type="button" id="filterEmpList" class="approve" value="Sort"/></td>
 		</tr>
@@ -41,9 +47,11 @@
 				<td><?php echo $employee['pos_name'];?></td>
 				<td><?php echo $employee['dept_name'];?></td>
 				<td><?php echo $employee['type'];?></td>
-				<td><?php echo ($employee['status']==1) ? "Active" : "Inactive";?></td>
+				<td><?php echo ($employee['status']==1) ? "Active" : "Inactive(Resigned)";?></td>
 				<td><?php echo date_format(date_create($employee['date_added']),"m/d/Y");?></td>
-				<td><button id="editEmployee<?php echo sha1($employee['employee_id']);?>" class="approve">Edit</button>
+				<td>
+
+				<button id="editEmployee<?php echo sha1($employee['employee_id']);?>" class="approve">Edit</button>
 			<!-- START - Edit Employee Modal -->
 			<div id="editEmployeeModal<?php echo sha1($employee['employee_id'].$employee['firstname']);?>" class="reveal-modal" style="color:#333333;font-size:14px;background-color:#fff;">
 				<p class="close-reveal-modal" style="cursor:pointer;">close[x]</p>
@@ -52,8 +60,32 @@
 						<tr><th colspan='2'>Edit Employee Details</th></tr>
 					</thead>
 					<tbody>
-						<tr><td>Firstname:</td><td><?php echo Form::input('firstname',$employee['firstname']);?></td></tr>
-						<tr><td>Middlename:</td><td><?php echo Form::input('middlename',$employee['middlename']);?></td></tr>
+						<tr><td>Firstname:</td><td><?php echo Form::input('firstname',$employee['firstname'],array("style"=>"width: 96%"));?></td></tr>
+						<tr><td>Middlename:</td><td><?php echo Form::input('middlename',$employee['middlename'],array("style"=>"width: 96%"));?></td></tr>
+						<tr><td>Lastname:</td><td><?php echo Form::input('lastname', $employee['lastname'],array("style"=>"width: 96%"));?></td></tr>
+						<tr>
+							<td>Martial Status:</td>
+							<td>
+							<select name="marital_status" style="width: 98%;">
+								<option value="1">Single</option>
+								<option value="2">Married</option>
+							</select>
+							</td>
+						</tr>
+						<tr>
+							<td>Position:</td>
+							<td>
+								<select name='position' style="width: 98%;">
+								<?php foreach($positions AS $position){ ?>
+								<?php if($position['position_no'] == $employee['position_no']){?>
+									<option selected value='<?php echo $position['position_no'];?>'><?php echo $position['pos_name'];?></option>
+								<?php } else {?>
+									<option value='<?php echo $position['position_no'];?>'><?php echo $position['pos_name'];?></option>
+								<?php } ?>
+								<?php } ?>
+								</select>
+							</td>
+						</tr>
 					</tbody>
 				</table>
 				<?php //print_r($employee);?>
@@ -101,6 +133,10 @@ $(document).ready(function(){
 			url += '&type='+$("select[name='type_query']").val();
 		}
 
+		if($("select[name='employee_status']").val()){
+			url += '&status='+$("select[name='employee_status']").val();
+		}
+		
 		if($("select[name='date_query']").val()){
 			url += '&date='+$("select[name='date_query']").val();
 		}

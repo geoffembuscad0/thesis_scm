@@ -17,13 +17,6 @@ class Controller_Login extends Controller {
 		$this->no_cache ();
 		
 		// Start - Validates current Sessions
-		if (Session::instance ()->get ( 'sales_id', 1 ) != null && Session::instance ()->get ( 'sales_sess' ) != null) {
-			echo "<script>self.location='" . URL::site ( null, null, false ) . "crm/inquiries_dashboard';</script>";
-		}
-		
-		if (Session::instance ()->get ( md5 ( 'crm' ) . 'admin_id' ) != null && Session::instance ()->get ( md5 ( 'ems' ) . 'admin_sess' )) {
-			echo "<script>self.location='" . URL::site ( null, null, false ) . "crm/admin_dashboard';</script>";
-		}
 		
 		if (Session::instance ()->get ( 'hr_id' ) != null && Session::instance ()->get ( 'hr_sess' ) != null) {
 			echo "<script>self.location='" . URL::site ( null, null, false ) . "ems/hr_dashboard';</script>";
@@ -46,17 +39,16 @@ class Controller_Login extends Controller {
 			$msg = null;
 		}
 		
-		$presentation_tier = View::factory ( "CRM/login_form" );
+		$presentation_tier = View::factory ( "login_form" );
 		$presentation_tier->head = $this->obj ['webstructure']->head ( $this->titlePage );
 		$presentation_tier->page_header = $this->obj ['webstructure']->page_header ();
 		$presentation_tier->message_login = $msg;
 		
-		$this->response->body ( $presentation_tier );
+		$this->response->body ( $presentation_tier);
 	}
 	function action_validate() {
 		$this->no_cache ();
-		// Update Embuscado December 10
-// 		
+
 		$inputs = array ();
 		
 		if ($this->request->query ( 'username' ) != null && $this->request->query ( 'pass' ) != null) {
@@ -74,7 +66,6 @@ class Controller_Login extends Controller {
 				$check_user_password = (count ( $this->obj ['account']->get_account_info ( $inputs ) ) > 0) ? true : false;
 				if ($check_user_password == true) {
 					if (Valid::email ( $inputs ['username'] )) {
-						// Employee-Sales Office side login of CRM system
 						// Update Embuscado December 3
 						$this->obj ['account']->get_audit ( $inputs ['username'], $this->audit_trail ['login'] );
 						
@@ -84,7 +75,6 @@ class Controller_Login extends Controller {
 					} else {
 						if (count ( explode ( "-", $inputs ['username'] ) ) > 0) {
 							// Admin side of CRM login
-							// Update Embuscado December 3
 							$this->obj ['account']->get_audit ( $inputs ['username'], $this->audit_trail ['login'] );
 							
 							Session::instance ()->set ( md5 ( 'tms' ) . 'admin_id', 1 );

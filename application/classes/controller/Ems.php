@@ -149,7 +149,7 @@ class Controller_Ems extends Controller {
 		// Model Core Logics
 		$presentation_tier->account_name = $this->obj['acc_logic']->get_account_name(Session::instance()->get('hr_sess'), "ems");
 		$presentation_tier->applicants = $this->obj['ems_logic']->get_applicants();
-		
+		$presentation_tier->employee_statuses = array(""=>"",1=>"Active",2=>"Inactive");
 		$presentation_tier->sort_queries = array(
 				"name" => array("","Firstname - ASC","Firstname - DESC","Lastname - ASC","Lastname - DESC"),
 				"position"=>array("","ASC","DESC"),
@@ -164,11 +164,13 @@ class Controller_Ems extends Controller {
 			"department"=>$this->request->query('department'),
 			"type"=>$this->request->query('type'),
 			"date"=>$this->request->query('date'),
+			"status"=>$this->request->query('status'),
 			"search_query" => null
 		);
-		
+
 		$presentation_tier->filter_data = $filter_datas;
 		$presentation_tier->employees = $this->obj['ems_logic']->get_employees($filter_datas);
+		$presentation_tier->positions = $this->obj['ems_logic']->get_positions();
 		
 		// Renders Template
 		$this->response->body($presentation_tier);
@@ -315,9 +317,14 @@ class Controller_Ems extends Controller {
 	}
 	public function action_employee_statistics(){
 		$presentation_tier = View::factory('EMS/admin/employee_statistics');
-		$presentation_tier->head = $this->obj ['webstructure']->head ( "HR Dashboard");
+		$presentation_tier->head = $this->obj ['webstructure']->head ( "General Manager Homepage");
 		$presentation_tier->page_header = $this->obj ['webstructure']->page_header ( $this->obj ['webstructure']->ems_admin_navigation () );
 		$presentation_tier->account_name = $this->obj['acc_logic']->get_account_name(Session::instance()->get(md5('ems').'admin_sess'), "ems");
+		
+		$presentation_tier->resigned_employee = $this->obj['ems_logic']->count_resigned_employees();
+		$presentation_tier->active_employees = $this->obj['ems_logic']->count_active_employees();
+		$presentation_tier->counted_drivers = $this->obj['ems_logic']->count_drivers();
+		$presentation_tier->counted_delivery_men = $this->obj['ems_logic']->count_delivery_men();
 		
 		$this->response->body($presentation_tier);
 	}
@@ -344,7 +351,7 @@ class Controller_Ems extends Controller {
 		$presentation_tier = View::factory ( "ems/admin/dashboard" );
 		
 		// Calls webstructure
-		$presentation_tier->head = $this->obj ['webstructure']->head ( "HR Dashboard");
+		$presentation_tier->head = $this->obj ['webstructure']->head ( "General Manager Homepage");
 		$presentation_tier->page_header = $this->obj ['webstructure']->page_header ( $this->obj ['webstructure']->ems_admin_navigation () );
 		$presentation_tier->verify_applicant_form = ($this->request->query('applicant_form') != null) ? $this->constructApplicantForm($this->request->query("applicant_no")) : null;
 		$presentation_tier->verify_applicant_form_script = ($this->request->query('applicant_form') != null) ? "$('#hiringModal').reveal();$('#birthdateApplicant').datepicker({maxDate:'0',minDate: new Date(1882, 10 - 1, 25),changeMonth:true,changeYear:true,dateFormat:'yy-mm-dd'});" : null;
@@ -353,6 +360,7 @@ class Controller_Ems extends Controller {
 		// Core Logics
 		$presentation_tier->account_name = $this->obj['acc_logic']->get_account_name(Session::instance()->get(md5('ems').'admin_sess'), "ems");
 		$presentation_tier->schduled_applicants = $this->obj['ems_logic']->get_applicants(1);
+		$presentation_tier->employee_statuses = array(""=>"",1=>"Active",2=>"Inactive");
 		
 		$presentation_tier->sort_queries = array(
 			"name" => array("","Firstname - ASC","Firstname - DESC","Lastname - ASC","Lastname - DESC"),
@@ -370,7 +378,8 @@ class Controller_Ems extends Controller {
 			"type"=>$this->request->query('type'),
 			"date"=>$this->request->query('date'),
 			"date_modified"=>$this->request->query('date_modified'),
-			"search_query"=>$this->request->query('search_query')
+			"search_query"=>$this->request->query('search_query'),
+			"status"=>$this->request->query('status')
 		);
 		
 		$presentation_tier->filter_data = $filter_datas;
@@ -422,7 +431,7 @@ class Controller_Ems extends Controller {
 	public function action_validate_hiree(){
 		$data = array(
 				//'applicant_no' => $this->request->post('applicant_no'),
-				'employee_code'=>Text::random('alnum',6),
+				'employee_code'=>$this->request->post('barcode_value'),
 				'firstname'=>$this->request->post('firstname'),
 				'middlename'=>$this->request->post('middlename'),
 				'lastname'=>$this->request->post('lastname'),
@@ -431,9 +440,10 @@ class Controller_Ems extends Controller {
 				'position'=>$this->request->post('position'),
 				'birthday'=>$this->request->post('birthday'),
 				'mobile'=>$this->request->post('mobile'),
-				'email'=>$this->request->post('email')
+				'email'=>$this->request->post('email'),
+				'marital_status'=>$this->request->post('marital_status')
 		);
-		
+
 		$error_msg = null;
 		
 		if(!Valid::alpha($data['firstname'])){
@@ -461,7 +471,7 @@ class Controller_Ems extends Controller {
 				$error_msg .= "This applicant is to young. ";
 			}
 		}
-// 		echo "<pre>";print_r($data);die();
+
 		if($error_msg != null){
 			$error_sub_msg = $error_msg;
 			$error_msg = null;

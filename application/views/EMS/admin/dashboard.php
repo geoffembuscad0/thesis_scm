@@ -36,7 +36,13 @@
                 <td><?php echo Form::select('position_query',$sort_queries['position'],$filter_data['position']); ?></td>
                 <td><?php echo Form::select('department_query',$sort_queries['department'],$filter_data['department']); ?></td>
                 <td><?php echo Form::select('type_query', $sort_queries['type'],$filter_data['type']); ?></td>
-                <td></td>
+                <td>
+                <select name="status">
+                <?php foreach($employee_statuses AS $stat_id => $emp_stat){ ?>
+                <option value="<?php echo $stat_id;?>"><?php echo $emp_stat;?></option>
+                <?php } ?>
+                </select>
+                </td>
                 <td><?php echo Form::select('date_modified', $sort_queries['date_modified'], $filter_data['date_modified']); ?></td>
                 <td><input type="button" id="filterEmpList" class="approve" value="Sort"/></td>
                 </tr>
@@ -47,12 +53,16 @@
                                                 <td><?php echo $employee['pos_name'];?></td>
                                                 <td><?php echo $employee['dept_name'];?></td>
                                                 <td><?php echo $employee['type'];?></td>
-                                                <td><?php echo ($employee['status']==1)?"Active":"Inactive"; ?></td>
+                                                <td><?php echo ($employee['status']==1)?"Active":"Inactive(Resigned)"; ?></td>
                                                 <td><?php echo date('d/m/Y g:i A',strtotime($employee['date_modified'])); ?></td>
                                                 <td>
                                                         <button id="viewEmployeeBtn<?php echo sha1($employee['employee_id']);?>" class="view">View Employee</button>
                                                         <button id="editEmployeeBtn<?php echo sha1($employee['employee_id']);?>" class="approve">Edit Employee</button>
+                                                        <?php if($employee['status'] == 1){ ?>
                                                         <button id="deleteEmp<?php echo $employee['employee_id'];?>" class="deny">Resign Employee</button>
+                                                        <?php } else {?>
+                                                        <button id="rehireEmployeeBtn<?php echo sha1($employee['employee_id']);?>" class="approve">Rehire Employee</button>
+                                                        <?php } ?>
                                                         
                                                         <div class="reveal-modal" id="viewEmployeeModal<?php echo sha1($employee['employee_id']);?>">
                                                         <p class='close-reveal-modal'>close[x]</p>
@@ -143,7 +153,9 @@
                                                                 $("#viewEmployeeBtn<?php echo sha1($employee['employee_id']);?>").on('click', function(){
                                                                         $("#viewEmployeeModal<?php echo sha1($employee['employee_id']);?>").reveal();
                                                                 });
-                                                                
+                                                                $("#rehireEmployeeBtn<?php echo sha1($employee['employee_id']);?>").on('click', function(){
+//                                                                     var
+                                                                });
                                                                 $("#saveemployeebtn<?php echo sha1($employee['employee_id']);?>").on('click', function(){
                                                                         $.ajax({
                                                                                 url: '<?php echo URL::site('ems/update_employee');?>',
@@ -179,7 +191,7 @@
                                                                                         data: { employee_id: '<?php echo $employee['employee_id'];?>' },
                                                                                         type: 'POST',
                                                                                         success: function(deleteemployeeResponse){
-                                                                                               alert('Employee status has changed successfully.');
+                                                                                               alert('Employee has resigned successfully.');
                                                                                                 self.location = '<?php echo URL::site('ems/admin_dashboard', null, false);?>';                            
                                                                                         }
                                                                                 });
@@ -225,6 +237,10 @@ $("#filterEmpList").on('click', function(){
                         url += '&type='+$("select[name='type_query']").val();
                 }
 
+                if($("select[name='status']").val()){
+                    url += '&status='+$("select[name='status']").val();
+                }
+                
                 if($("select[name='date_query']").val()){
                         url += '&date='+$("select[name='date_query']").val();
                 }

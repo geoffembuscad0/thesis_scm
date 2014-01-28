@@ -14,7 +14,7 @@ table tr th,td{border: 1px solid #000;padding: 6px 6px 6px 6px;text-align:left;}
 		<th>Position</th>
 		<th>Rate</th>
 		<th>Gross</th>
-		<th>Hours Worked</th>
+		<th>No. of Days worked</th>
 		<th>SSS</th>
 		<th>PagIbig</th>
 		<th>PhilHealth</th>
@@ -27,11 +27,11 @@ table tr th,td{border: 1px solid #000;padding: 6px 6px 6px 6px;text-align:left;}
 		<td><?php echo $data['position'];?></td>
 		<td><?php echo $data['employee_rate'];?></td>
 		<td><?php echo $data['gross_pay'];?></td>
-		<td><?php echo $data['total_hours'];?></td>
+		<td><?php echo $data['days_worked'][0]['days_worked'];?></td>
 		<td><?php echo $data['deduction']['sss'];?></td>
 		<td><?php echo $data['deduction']['pagibig'];?></td>
 		<td><?php echo $data['deduction']['philhealth'];?></td>
-		<td><?php echo $data['net_pay'];?></td>
+		<td><?php if($data['net_pay'] < 0){ echo "0"; }else{ echo $data['net_pay']; }?></td>
 		<?php $net_total += $data['net_pay'];?>
 	</tr>
 	<?php } ?>

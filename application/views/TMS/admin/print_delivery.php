@@ -13,7 +13,7 @@ table tr th,td{border: 1px solid #000;padding: 6px 6px 6px 6px;text-align:left;}
 
 <tr>
 <td style='width:100px;'>Receiver:</td>
-<td style='width:600px;'><?php echo $delivery_details[0]['receiver'];?></td>
+<td style='width:600px;'><?php echo $delivery_details[0]['marketplace'];?></td>
 </tr>
 
 <tr>

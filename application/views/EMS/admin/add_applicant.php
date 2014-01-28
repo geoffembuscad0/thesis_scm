@@ -11,6 +11,10 @@
 		<td class="label" style="text-align:center;" colspan='6'><p>Fields with (<font color='red'>*</font>) are <b>required fields</b>.</p></td></tr>
 		<?php echo $applicant_response; //Session::instance()->delete('applicant_msg'); ?>
 		<tr>
+		<td class="label">Barcode Value<font color='red'>*</font>(user barcode scanner):</td>
+		<td class="input" colspan="5"><?php echo Form::input('barcode_value',null,array("class"=>"applicant_input", "placeholder"=>"Barcode Value"));?></td>
+		</tr>
+		<tr>
 		<td class="label">Firstname<font color='red'>*</font>:</td>
 		<td class="input"><?php echo Form::input("firstname",null, array("class"=>"applicant_input", "placeholder"=>"Firstname")); ?></td>
 		<td class="label">Middlename<font color='red'>*</font>:</td>
@@ -32,23 +36,21 @@
 		<td class="label">Email<font color='red'>*</font>:</td>
 		<td class="input"><?php echo Form::input('email',null,array("class"=>"applicant_input","placeholder"=>"Email")); ?></td>
 		<td class="label">Marital Status<font color='red'>*</font>:</td>
-		<td class="input" colspan="3"><?php echo Form::radio('marital_status','single');?>Single 
-		<?php echo Form::radio('marital_status', 'married'); ?>Married
+		<td class="input" colspan="3"><?php echo Form::radio('marital_status',1);?>Single 
+		<?php echo Form::radio('marital_status', 2); ?>Married
 		</td>
 		</tr>
 		<tr>
 		<td class="label" colspan="2">Position Applying For<font color='red'>*</font>:</td>
-		<td class="input" colspan="4">
+		<td class="input" colspan="2">
 			<select name='position'>
 			<?php foreach($positions AS $position){ ?>
 			<option value='<?php echo $position['position_no'];?>'><?php echo $position['pos_name'];?></option>
 			<?php } ?>
 			</select>
 		</td>
-		</tr>
-		<tr>
-		<td class="label" colspan="2">Employee Type<font color='red'>*</font>:</td>
-		<td class="input" colspan="4">
+		<td class="label">Employee Type<font color='red'>*</font>:</td>
+		<td class="input">
 			<?php echo Form::radio('employee_type',1);?>Part-Time
 			<?php echo Form::radio('employee_type',2);?>Fulltime
 		</td>
@@ -77,6 +79,7 @@ $(document).ready(function(){
 			url: '<?php echo URL::site("ems/validate_hiree",null,false);?>',
 			type: 'POST',
 			data: {
+				barcode_value:$("input[name='barcode_value']").val(),
 				firstname: $("input[name='firstname']").val(),
 				middlename: $("input[name='middlename']").val(),
 				lastname: $("input[name='lastname']").val(),
@@ -85,7 +88,8 @@ $(document).ready(function(){
 				mobile: $("input[name='mobile']").val(),
 				position:$("select[name='position']").val(),
 				birthday: $("input[name='birthday']").val(),
-				email: $("input[name='email']").val()
+				email: $("input[name='email']").val(),
+				marital_status:$("input[name='marital_status']").val()
 			}, success: function(responseAddEmployee){
 				$("#responseEmployeeAdd").html(responseAddEmployee);
 			}

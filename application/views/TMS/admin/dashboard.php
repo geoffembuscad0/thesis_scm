@@ -14,7 +14,7 @@
 		<table class="InquiryDocumentsSales">
 			<thead>
 				<tr>
-					<th>Receiver</th>
+					<th>Target Market</th>
 					<th>Date Receiving</th>
 					<th>Date Issued</th>
 					<th>Status</th>
@@ -24,7 +24,7 @@
 			<tbody>
 				<?php foreach($delivery_datas AS $deliverRecord){ ?>
 					<tr>
-						<td><?php echo $deliverRecord['receiver']; ?></td>
+						<td><?php echo $deliverRecord['marketplace']; ?></td>
 						<td><?php echo date_format(date_create($deliverRecord['date_receiving']),"m/d/Y"); ?></td>
 						<td><?php echo date_format(date_create($deliverRecord['date_issued']), "m/d/Y"); ?></td>
 						<td><?php echo $deliverRecord['label'];?></td>
@@ -37,11 +37,11 @@
 								<p class="close-reveal-modal" style="cursor:pointer;">close[x]</p>
 								<table class="InquiryDocumentsSales">
 									<thead>
-										<tr><th>Receiver</th></tr>
+										<tr><th>Marketplace</th></tr>
 									</thead>
 									<tbody>
 										<tr>
-											<td><?php echo $deliverRecord['receiver'];?></td>
+											<td><?php echo $deliverRecord['marketplace'];?></td>
 										</tr>
 									</tbody>
 								</table>

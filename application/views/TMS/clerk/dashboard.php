@@ -67,36 +67,46 @@
 </div>
 <!-- ADD DELIVERY MODAL FORM END -->
 <!-- Add Marketplace START -->
-<div id='addShoppingMarketModal' class='reveal-modal' style='color: #000;'>
+<div id='addCompanyModal' class='reveal-modal' style='color: #000;'>
 	<p class='close-reveal-modal' style='cursor:pointer;'>close[x]</p>
-	<h1>Add Store</h1>
+	<h1>Add Client(Company)</h1>
 	<table class='InquiryDocumentsSales' style='width:100%;border: 1px solid #000;'>
 		<thead style='border: 1px solid #000;'>
 			<tr style='border: 1px solid #000;'>
-				<th colspan='2' style='border: 1px solid #000;'>Store Details</th>
+				<th colspan='2' style='border: 1px solid #000;'>Client Details</th>
 			</tr>
 		</thead>
 		<tbody style='border: 1px solid #000;'>
 			<tr>
-				<td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Shopping Markets:</td>
+				<td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Company Name:</td>
 			</tr>
 			<tr>
 				<td colspan='2'>
-					<input type="text" name="marketPlace" class="" style="border:1px solid #fff;width:96%;" placeholder="Shopping Mall/Supermarket" />
+					<input type="text" name="company_name" class="" style="border:1px solid #fff;width:96%;" placeholder="Company Name" />
 				</td>
 			</tr>
 			<tr>
-				<td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Address:</td>
+				<td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Office Address:</td>
 			</tr>
 			<tr>
-				<td colspan='2'><textarea id="" name="marketAddress" cols="50" rows="3" style="border:1px solid #fff;width:96%;" placeholder="Address of store."></textarea></td>
+				<td colspan='2'>
+					<textarea name="address" class="" style="border:1px solid #fff;width:96%;height: 200px;" placeholder="Address" /></textarea>
+				</td>
 			</tr>
 			<tr>
-				<td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'><button id='addmartketBtn' type='button' class='approve'>Add Market</button></td>
+				<td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'>Contact No.:</td>
+			</tr>
+			<tr>
+				<td colspan='2'>
+					<input type="text" name="contact_number" class="" style="border:1px solid #fff;width:96%;" placeholder="Contact Number" />
+				</td>
+			</tr>
+			<tr>
+				<td colspan='2' style='background:#006CD9;color:#fff;font-weight:bold;font-size:18px;'><button id='addcompanyBtn' type='button' class='approve'>Add Company</button></td>
 			</tr>
 		</tbody>
 	</table>
-	<div id='addMarketResponse'></div>
+	<div id='addCompanyResponse'></div>
 </div>
 <!-- Add Marketplace END -->
 <div class="pure-g" style="text-align:left;">
@@ -268,6 +278,10 @@ $(document).ready(function(){
 	$("#addshoppingMarket").on('click', function(){
 		$("#addShoppingMarketModal").reveal();
 	});
+
+	$("#addCompany").on('click', function(){
+		$("#addCompanyModal").reveal();
+	});
 	
 	$(".dateArrival").datetimepicker();
 
@@ -285,6 +299,18 @@ $(document).ready(function(){
 		});
 	});
 
+	$("#addcompanyBtn").on('click', function(){
+		$.ajax({
+			url: '<?php echo URL::site('tms/add_company', null, false); ?>',
+			type: 'POST',
+			data: {company_name:$("input[name='company_name']").val()},
+			success: function(responseAddCompany){
+				alert(responseAddCompany);
+				self.location = '<?php echo URL::site('tms/clerk_dashboard',null,false);?>';
+			}
+		});
+	});
+	
 	$("#addscheduledelivery").on('click',function(){
 		$.ajax({
 			url: '<?php echo URL::site('tms/add_deliver_schedule'); ?>',

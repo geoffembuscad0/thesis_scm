@@ -125,13 +125,14 @@ class Model_Pms extends Model {
 		return $rate;
 	}
 	public function login_employee($employee_id ){
+		DB::query(DATABASE::INSERT, "insert into pms_attendance_monitoring values(null,'".$employee_id."',now(),null);")->execute();
 		DB::query(DATABASE::INSERT, "INSERT INTO pms_logged_employee VALUES('".$employee_id."')")->execute();
 		// clears null employee ids
 		DB::query(DATABASE::DELETE, "DELETE FROM pms_logged_employee WHERE employee_id IS NULL")->execute();
 	}
 	public function logout_employee($employee_id){
+		DB::query(DATABASE::UPDATE, "UPDATE pms_attendance_monitoring SET timeout = now() WHERE emp_no = '".$employee_id."'")->execute();
 		DB::query(DATABASE::DELETE, "DELETE FROM pms_logged_employee WHERE employee_id = '".$employee_id."'")->execute();
-		// clears null employee ids
 		DB::query(DATABASE::DELETE, "DELETE FROM pms_logged_employee WHERE employee_id IS NULL")->execute();
 	}
 	public function get_employees_rate(){

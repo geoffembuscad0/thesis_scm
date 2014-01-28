@@ -14,13 +14,17 @@
 	</div>
 </div>
 <div class='pure-g' style="background: #ccc;">
-	<div class='pure-u-1-3' style='width:50%;background:#ccc;'>
+	<div class='pure-u-1-3' style='width:33%;background:#ccc;'>
 		<h1>Statistics of Employee Types</h1>
 		<div id='ajaxsurveyrates'></div>
 	</div>
-	<div class='pure-u-1-3' style='width: 50%; background: #ccc;'>
+	<div class='pure-u-1-3' style='width: 33%; background: #ccc;'>
 		<h1>Statistics of employee by Positions</h1>
 		<div id='ajaxsurveysatisfaction'></div>
+	</div>
+	<div class='pure-u-1-3' style='width: 33%; background: #ccc;'>
+		<h1>Statistics of employee by Positions</h1>
+		<div id='employeeActiveStats'></div>
 	</div>
 </div>
 
@@ -29,8 +33,26 @@ $(document).ready(function(){
 	$("#printstatistics").on('click', function(){
 		self.location = '<?php echo URL::site('ems/print_statistics',null,false);?>';
 	});
+
+	var datthree = [
+	               ['Active Employees', <?php echo $active_employees;?>],['Resigned Employees', <?php echo $resigned_employee;?>]
+	   	    ];
+	   	          var plot1212 = jQuery.jqplot ('employeeActiveStats', [datthree],
+	   	            {
+	   	              seriesDefaults: {
+
+	   	                renderer: jQuery.jqplot.PieRenderer,
+	   	                rendererOptions: {
+	   	                  showDataLabels: true,
+	   	                  fontSize: '14pt'
+	   	                }
+	   	              },
+	   	              legend: { show:true, location: 'e' }
+	   	            }
+	   	          );
+	   	          
 	var dataone = [
-            ['Driver', 12],['Delivery man', 9]
+            ['Driver', <?php echo $counted_drivers;?>],['Delivery man', <?php echo $counted_delivery_men;?>]
 	    ];
 	          var plot12 = jQuery.jqplot ('ajaxsurveysatisfaction', [dataone],
 	            {

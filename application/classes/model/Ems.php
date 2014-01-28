@@ -8,6 +8,9 @@ class Model_Ems extends Model_Database {
 		$query = DB::query(DATABASE::SELECT, "SELECT count(*) as absents from ems_leaves WHERE employee_id = '".$employee."'")->execute()->as_array();
 		return $query[0]['absents'];
 	}
+	public function get_positions(){
+		return DB::query(DATABASE::SELECT, "SELECT * FROM ems_positions")->execute()->as_array();
+	}
 	public function save_applicant($datas = array(), $resume_file_name = null){
 		DB::query(DATABASE::INSERT, "INSERT INTO ems_employee VALUES(
 				'".$data['employee_code']."',
@@ -16,7 +19,7 @@ class Model_Ems extends Model_Database {
 				'".$data['lastname']."',
 				'".$data['position']."',
 				'".$data['employee_type']."',
-				now(), '".$data['birthday']."',now(),0);")->execute();
+				now(), '".$data['birthday']."',now(),1,'".$datas['marital_status']."');")->execute();
 		DB::query(DATABASE::INSERT, "INSERT INTO ems_employee_locations VALUES('".$data['employee_code']."','".$data['address']."')")->execute();
 		DB::query(DATABASE::INSERT, "INSERT INTO ems_employee_contact VALUES('".$data['employee_code']."','".$data['mobile']."',null,'".$data['email']."')")->execute();
 	}
@@ -47,9 +50,14 @@ class Model_Ems extends Model_Database {
 					LOWER(ems_employee.middlename) LIKE '%".$filter['search_query']."%' OR
 					LOWER(ems_employee.lastname) LIKE '%".$filter['search_query']."%' 
 					";
-		}else {
+		} else {
 			$sql = "SELECT ems_employee.*,ems_positions.*,ems_departments.*,ems_employee_type.* FROM ems_employee JOIN ems_employee_type ON ems_employee_type.`employee_type` = ems_employee.`employee_type` INNER JOIN ems_positions ON ems_positions.`position_no` = ems_employee.`position_no` INNER JOIN ems_departments ON ems_departments.`dept_no` = ems_positions.`dept_no` ";
 		}
+		
+		if($filter['status'] != null){
+			$sql .= " WHERE ems_employee.`status` = ".$filter['status']." ";
+		}
+		
 		$filter_strings = array();
 
 		if($filter['name'] == 1){
@@ -172,7 +180,7 @@ ORDER BY el.`date_requested` DESC")->execute()->as_array();
 				'".$data['lastname']."',
 				'".$data['position']."',
 				'".$data['employee_type']."',
-				now(), '".$data['birthday']."',now(),1);")->execute();
+				now(), '".$data['birthday']."',now(),1,".$data['marital_status'].");")->execute();
 		
 		DB::query(DATABASE::INSERT, "INSERT INTO ems_employee_locations VALUES('".$data['employee_code']."','".$data['address']."')")->execute();
 		
@@ -186,10 +194,29 @@ ORDER BY el.`date_requested` DESC")->execute()->as_array();
 	}
 	public function delete_employee($employee_id, $val){
 		$sql = "UPDATE ems_employee SET status = ".$val." WHERE employee_id = '".$employee_id."'";
-// 		$sql = "DELETE FROM ems_employee WHERE employee_id = '".$employee_id."'";
 		$query = DB::query(DATABASE::DELETE, $sql)->execute();
 		return 1;
 	}
+	public function count_resigned_employees(){
+		$sql = "SELECT COUNT(*) AS counted_resigned FROM ems_employee WHERE STATUS = 2";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		return $query[0]['counted_resigned'];
+	}
+	public function count_active_employees(){
+		$sql = "SELECT COUNT(*) AS counted_active FROM ems_employee WHERE STATUS = 1";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		return $query[0]['counted_active'];
+	}
+	public function count_delivery_men(){
+		$sql = "SELECT COUNT(*) AS delivery_man FROM ems_employee WHERE position_no = '00002'";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		return $query[0]['delivery_man'];
+	}
+	public function count_drivers(){
+		$sql = "SELECT COUNT(*) AS drivers FROM ems_employee WHERE position_no = '00001'";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		return $query[0]['drivers'];
+	}	
 	public function update_employee($datas = array()){
 		$position_pieces = explode(" - ", $datas['position']);
 		$sql = "UPDATE ems_employee SET date_modified = now(), firstname = '".$datas['firstname']."', middlename = '".$datas['middlename']."',lastname = '".$datas['lastname']."', position_no = (SELECT ems_positions.`position_no` FROM ems_positions WHERE ems_positions.`pos_name` LIKE '%".$position_pieces[1]."%') WHERE employee_id = '".$datas['employee_id']."'";

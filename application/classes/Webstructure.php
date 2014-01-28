@@ -95,9 +95,10 @@ class Webstructure {
 	}
 	public function tms_personnel_navigation(){
 		$nav = '<ul class="dropdown" style="z-index:2;text-decoration:none;margin-top: -40px;height: 45px;float:right;">';
-		$nav .= '<li><a href="'.URL::base().'tms/personnel_dashboard">Dashboard</a></li>';
+		$nav .= '<li><a href="'.URL::base().'tms/clerk_dashboard">Dashboard</a></li>';
 		$nav .= '<li><a id="addDeliverySched" href="#addDeliverySched">Add Delivery Record</a></li>';
 		$nav .= '<li><a id="addshoppingMarket" href="#addShoppingMarket">Add Market</a></li>';
+		$nav .= '<li><a id="addCompany" href="#addCompany">Add Company</a></li>';
 		$nav .= '<li><a href="'.URL::site(null,null,false).'tms/personnel_logout">Logout</a></li>';
 		return $nav;
 	}

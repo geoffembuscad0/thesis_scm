@@ -43,7 +43,30 @@ class Controller_Tms extends Controller {
 		// Core Logics
 		$presentation_tier->account_name = $this->obj['acc_logic']->get_account_name(Session::instance()->get(md5('tms') . 'admin_sess'), "tms");
 		$presentation_tier->delivery_datas = $this->obj['tms_logic']->selectDeliverRecords();
-
+		
+		$this->response->body($presentation_tier);
+	}
+	public function action_add_company(){
+		$data = array('name'=>$this->request->post('company_name'));
+		$this->obj['tms_logic']->add_company($data);
+		echo "Client Company has been added.";
+	}
+	public function action_admin_report(){
+		$this->titlePage = "Stellar Cargo Movers - Admin report";
+		
+		// No-Cache Page
+		$this->no_cache ();
+		
+		// Builds presentation tier
+		$presentation_tier = View::factory ( "TMS/admin/report" );
+		$presentation_tier->head = $this->obj ['webstructure']->head ( $this->titlePage );
+		$presentation_tier->page_header = $this->obj ['webstructure']->page_header ( $this->obj ['webstructure']->tms_admin_dashboard () );
+		$presentation_tier->addDeliverySchedForm = null;//$this->obj['webstructure']->add_delivery_sched_form();
+		
+		// Core Logics
+		$presentation_tier->account_name = $this->obj['acc_logic']->get_account_name(Session::instance()->get(md5('tms') . 'admin_sess'), "tms");
+		$presentation_tier->delivery_datas = $this->obj['tms_logic']->selectDeliverRecords();
+		
 		$this->response->body($presentation_tier);
 	}
 	public function action_admin_logout(){
@@ -126,7 +149,7 @@ class Controller_Tms extends Controller {
 	}
 	public function action_delivery_details(){
 		$delivery_id = $this->request->query('delivery_id');
-		
+		// echo "<pre>";print_r($this->obj['tms_logic']->selectDeliveryRecord($delivery_id));die();
 		$presentation_tier = View_PDF::factory('tms/admin/print_delivery',array (
 				'title' => 'Delivery Details',
 				'name' => 'delivery_details.pdf'

@@ -165,7 +165,8 @@ class Controller_Pms extends Controller {
 				"type"=>$this->request->query('type'),
 				"date"=>$this->request->query('date'),
 				"date_modified"=>$this->request->query('date_modified'),
-				"search_query"=>$this->request->query('search_query')
+				"search_query"=>$this->request->query('search_query'),
+				"status"=>null
 		);
 		$presentation_tier->employees = array();
 		
@@ -207,7 +208,8 @@ class Controller_Pms extends Controller {
 				"type"=>$this->request->query('type'),
 				"date"=>$this->request->query('date'),
 				"date_modified"=>$this->request->query('date_modified'),
-				"search_query"=>$this->request->query('search_query')
+				"search_query"=>$this->request->query('search_query'),
+				"status"=>null
 		);
 		$datas = array();
 		$coun = 0;
@@ -216,6 +218,7 @@ class Controller_Pms extends Controller {
 			$datas[$coun]['employee_name'] = $employee['firstname'] . " " . $employee['lastname'];
 			$datas[$coun]['position'] = $employee['pos_name'];
 			$datas[$coun]['dept'] = $employee['dept_name'];
+			$datas[$coun]['days_worked'] = $this->obj['pms_logic']->get_number_of_days_worked($employee['employee_id']);
 			$datas[$coun]['employee_rate'] = $this->obj['pms_logic']->get_employee_rate($employee['employee_id']);
 			$datas[$coun]['gross_pay'] = $this->get_employee_total_hours($employee['employee_id']) * $datas[$coun]['employee_rate'];
 			$datas[$coun]['total_hours'] = $this->obj['pms_logic']->get_total_hours_worked($employee['employee_id']);
@@ -225,6 +228,7 @@ class Controller_Pms extends Controller {
 			$datas[$coun]['net_pay'] = $datas[$coun]['gross_pay'] - array_sum($datas[$coun]['deduction']);
 			$coun++;
 		}
+
 		$presentation_tier = View_PDF::factory('PMS/timekeeper/print_ledger',array('title'=>'Employees Ledger', 'name'=>"Report_Ledger" . date('m-d-Y') . '_EmployeeLogs.pdf'))
 		->set('datas', $datas)
 		->set('date', date('m/d/Y'))

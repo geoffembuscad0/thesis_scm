@@ -31,4 +31,7 @@ abstract class Controller extends Kohana_Controller {
 		return $data[$index];
 	}
 	
+	public function display_error_embuscado(){
+		
+	}
 }
