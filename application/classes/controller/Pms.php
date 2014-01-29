@@ -28,6 +28,7 @@ class Controller_Pms extends Controller {
 				$this->login_msg("It Seems that you're already logged in.");
 			} else {
 				$this->obj['pms_logic']->login_employee($employee_id);
+				$this->obj['pms_logic']->attendance_login($employee_id);
 				$this->login_msg("Employee logged in successfully");
 			}
 		}
@@ -35,6 +36,7 @@ class Controller_Pms extends Controller {
 		if($this->request->post('logout') != null){
 			if($this->obj['pms_logic']->validate_employee_log($employee_id) > 0){
 				$this->obj['pms_logic']->logout_employee($employee_id);
+				$this->obj['pms_logic']->attendance_logout($employee_id);
 				$this->logout_msg("Employee Logged out successfully.");
 			} else {
 				$this->logout_msg("You're already logged out.");
@@ -165,11 +167,10 @@ class Controller_Pms extends Controller {
 				"type"=>$this->request->query('type'),
 				"date"=>$this->request->query('date'),
 				"date_modified"=>$this->request->query('date_modified'),
-				"search_query"=>$this->request->query('search_query'),
-				"status"=>null
+				"search_query"=>$this->request->query('search_query')
 		);
 		$presentation_tier->employees = array();
-		
+
 		foreach($this->obj['ems_logic']->get_employees($filter_datas,2) AS $employee){
 			$presentation_tier->employees[] = array(
 				'employee_id'	=> $employee['employee_id'],
@@ -182,9 +183,8 @@ class Controller_Pms extends Controller {
 				'total_hours'	=> $this->get_employee_total_hours($employee['employee_id']),
 				'employee_logs' => $this->obj['pms_logic']->get_employee_logs($employee['employee_id'])
 			);
-
-			
 		}
+		
 		$this->response->body($presentation_tier);
 	}
 	public function action_personnel_logout(){
@@ -208,8 +208,7 @@ class Controller_Pms extends Controller {
 				"type"=>$this->request->query('type'),
 				"date"=>$this->request->query('date'),
 				"date_modified"=>$this->request->query('date_modified'),
-				"search_query"=>$this->request->query('search_query'),
-				"status"=>null
+				"search_query"=>$this->request->query('search_query')
 		);
 		$datas = array();
 		$coun = 0;
@@ -218,7 +217,6 @@ class Controller_Pms extends Controller {
 			$datas[$coun]['employee_name'] = $employee['firstname'] . " " . $employee['lastname'];
 			$datas[$coun]['position'] = $employee['pos_name'];
 			$datas[$coun]['dept'] = $employee['dept_name'];
-			$datas[$coun]['days_worked'] = $this->obj['pms_logic']->get_number_of_days_worked($employee['employee_id']);
 			$datas[$coun]['employee_rate'] = $this->obj['pms_logic']->get_employee_rate($employee['employee_id']);
 			$datas[$coun]['gross_pay'] = $this->get_employee_total_hours($employee['employee_id']) * $datas[$coun]['employee_rate'];
 			$datas[$coun]['total_hours'] = $this->obj['pms_logic']->get_total_hours_worked($employee['employee_id']);
@@ -228,7 +226,6 @@ class Controller_Pms extends Controller {
 			$datas[$coun]['net_pay'] = $datas[$coun]['gross_pay'] - array_sum($datas[$coun]['deduction']);
 			$coun++;
 		}
-
 		$presentation_tier = View_PDF::factory('PMS/timekeeper/print_ledger',array('title'=>'Employees Ledger', 'name'=>"Report_Ledger" . date('m-d-Y') . '_EmployeeLogs.pdf'))
 		->set('datas', $datas)
 		->set('date', date('m/d/Y'))
@@ -307,14 +304,15 @@ class Controller_Pms extends Controller {
 		$deductions['SSS'] = $this->obj['pms_logic']->get_sss_deduction($gross_pay); // IMPORTANT
 		$deductions['PagIbig'] = $this->obj['pms_logic']->get_philhealth_deduction($gross_pay); // IMPORTANT
 		$deductions['philhealth'] = $this->obj['pms_logic']->get_pagibig_deduction(); // IMPORTANT
-// 		echo "<pre>";
-// 		print_r($deductions);
-// 		die();
+
 		$total_deduction = array_sum($deductions);
 
 		// Gets Total NET PAY
 		$net_pay = ($gross_pay + $employee_marital_stat_rate) - $total_deduction;
 		
+		// Gets BIR Exemptions
+		$bir_exemptions = $this->obj['pms_logic']->get_bir_value($net_pay);
+
 		// Renders Web Template into PDF file
 		$presentation_tier = View_PDF::factory('PMS/timekeeper/payslip',array('title'=>'Employee Payslip', 'name'=>$employee_name . '_' . date('m-d-Y') . '_EmployeePayslip.pdf'))
 		->set('employee_id', $employee_id)
@@ -331,7 +329,10 @@ class Controller_Pms extends Controller {
 		->set('OT_rate',number_format($employee_rate * .20,2,'.',','))
 		->set('gross_pay',$gross_pay)
 		->set('deductions', $deductions)
+		->set('total_deductions', $total_deduction)
 		->set('net_value', $net_pay)
+		->set('bir_tax', $bir_exemptions['tax'])
+		->set('bir_excess',$bir_exemptions['excess'])
 		->set('employee_single_married_twenty', $employee_single_married_twenty)
 		->set('date', date('M d Y'))
 		->render();

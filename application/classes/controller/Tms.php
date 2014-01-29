@@ -149,7 +149,6 @@ class Controller_Tms extends Controller {
 	}
 	public function action_delivery_details(){
 		$delivery_id = $this->request->query('delivery_id');
-		// echo "<pre>";print_r($this->obj['tms_logic']->selectDeliveryRecord($delivery_id));die();
 		$presentation_tier = View_PDF::factory('tms/admin/print_delivery',array (
 				'title' => 'Delivery Details',
 				'name' => 'delivery_details.pdf'

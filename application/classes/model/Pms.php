@@ -8,17 +8,10 @@ class Model_Pms extends Model {
 		foreach($query AS $q){
 			$data['ex'] = $q['exemption'];
 			$data['sme'] = $q['sme'];
+			$data['status'] = $q['status'];
 		}
-		$return_values['excess'] = ($netpay - $data['sme']) * 0.25; // 
-		$return_values['tax'] = $data['ex'] + $return_values['excess']; // computation
-		/*
-		 * Example
-		 * Excess = (netincome-SME)*0.25
-
-			0.25 is status
-
-			Tax = Exemption + excess
-		 */
+		$return_values['excess'] = ($netpay - $data['sme']) * $data['status']; // BIR Excess
+		$return_values['tax'] = $data['ex'] + $return_values['excess']; // BIR Tax
 		return $return_values;
 	}
 	public function get_sss_deductions(){
@@ -100,8 +93,7 @@ class Model_Pms extends Model {
 		$sql = "SELECT TIMESTAMPDIFF(HOUR, time_in, timeout) AS `diff` 
 		FROM pms_attendance_monitoring
 		WHERE emp_no = '".$employee."' AND DATE_FORMAT(time_in,'%m') = DATE_FORMAT(NOW(),'%m')
-		AND DATE_FORMAT(timeout,'%m') = DATE_FORMAT(NOW(),'%m')";
-// 		die($sql);
+		AND DATE_FORMAT(timeout,'%m') = DATE_FORMAT(NOW(),'%m');";
 		$query  = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
 		return $query;
 	}
@@ -125,13 +117,10 @@ class Model_Pms extends Model {
 		return $rate;
 	}
 	public function login_employee($employee_id ){
-		DB::query(DATABASE::INSERT, "insert into pms_attendance_monitoring values(null,'".$employee_id."',now(),null);")->execute();
 		DB::query(DATABASE::INSERT, "INSERT INTO pms_logged_employee VALUES('".$employee_id."')")->execute();
-		// clears null employee ids
 		DB::query(DATABASE::DELETE, "DELETE FROM pms_logged_employee WHERE employee_id IS NULL")->execute();
 	}
 	public function logout_employee($employee_id){
-		DB::query(DATABASE::UPDATE, "UPDATE pms_attendance_monitoring SET timeout = now() WHERE emp_no = '".$employee_id."'")->execute();
 		DB::query(DATABASE::DELETE, "DELETE FROM pms_logged_employee WHERE employee_id = '".$employee_id."'")->execute();
 		DB::query(DATABASE::DELETE, "DELETE FROM pms_logged_employee WHERE employee_id IS NULL")->execute();
 	}
@@ -150,11 +139,37 @@ class Model_Pms extends Model {
 		return $existing_log;
 	}
 	public function attendance_login($employee_id){
-		$sql = "INSERT INTO pms_attendance_monitoring VALUES(NULL,'".$employee_id."',NOW(),NULL)";
+		$select_timein = DB::query(DATABASE::SELECT, "SELECT *, time_in + INTERVAL grace_period MINUTE AS time_in_g, DATE_FORMAT(NOW(),'%H:%i:%s') AS time_today FROM pms_schedule_time")->execute()->as_array();
+		$time_in_data = array();
+		foreach($select_timein AS $time_in){
+			$time_in_data['time_in'] = $time_in['time_in'];
+			$time_in_data['graceperiod'] = $time_in['grace_period'];
+			$time_in_data['time_in_grace'] = $time_in['time_in'];
+			$time_in_data['time_today'] = $time_in['time_today'];
+		}
+		$to_time = strtotime("2008-12-13 " . $time_in_data['time_today']);
+		$from_time = strtotime("2008-12-13 " . $time_in_data['time_in_grace']);
+
+		$minutes_late = round(($to_time - $from_time) / 60,2);
+		if($minutes_late < 0){
+			$minutes_late = 0;
+		}
+		$sql = "INSERT INTO pms_attendance_monitoring VALUES(NULL,'".$employee_id."',NOW(),NULL,".$minutes_late.")";
 		DB::query(DATABASE::INSERT, $sql)->execute();
 	}
 	public function attendance_logout($emp_no){
 		$sql = "UPDATE pms_attendance_monitoring SET timeout = now() WHERE emp_no = '".$emp_no."' AND date_format(time_in,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d')";
 		DB::query(DATABASE::UPDATE, $sql)->execute();
+	}
+	public function get_deduction_late($emp_no){
+		$sql = "SELECT sum(mins_late) as total_late_mins from pms_attendance_monitoring WHERE emp_no = '".$emp_no."' AND 
+		DATE_FORMAT(time_in,'%m') = DATE_FORMAT(NOW(),'%m') AND 
+		DATE_FORMAT(timeout, '%m') = DATE_FORMAT(NOW(), '%m')";
+		$query = DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
+		$data = array();
+		foreach($query as $q){
+			$data['total_late'] = $q['total_late_mins'];
+		}
+		return $data['total_late'];
 	}
 }

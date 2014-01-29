@@ -26,8 +26,7 @@ class Model_Tms extends Model_Database {
 		return DB::query(DATABASE::SELECT, "SELECT (select name from tms_marketplace where market_no = d.market_no) As marketplace, d.*, ds.* FROM tms_delivers d JOIN tms_delivery_status ds ON d.`delivery_stat` = ds.`deliver_stat`")->execute()->as_array();
 	}
 	public function selectDeliveryRecord($delivery_id){
-	$sql = "SELECT d.*, ds.*,(SELECT NAME FROM tms_marketplace WHERE market_no = d.market_no) AS marketplace FROM tms_delivers d 
-JOIN tms_delivery_status ds ON d.`delivery_stat` = ds.`deliver_stat` WHERE d.`deliver_id` = '".$delivery_id."'";
+	$sql = "SELECT d.*, ds.*,(SELECT NAME FROM tms_marketplace WHERE market_no = d.market_no) AS marketplace FROM tms_delivers d JOIN tms_delivery_status ds ON d.`delivery_stat` = ds.`deliver_stat` WHERE d.`deliver_id` = '".$delivery_id."'";
 		return DB::query(DATABASE::SELECT, $sql)->execute()->as_array();
 	}
 	public function delete_delivery($delivery_id){
